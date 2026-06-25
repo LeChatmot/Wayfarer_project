@@ -1,0 +1,5 @@
+services:
+  postgis:
+    image: postgis/postgis:latest
+    ports:
+      - "17812:80"
