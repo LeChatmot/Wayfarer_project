@@ -1,5 +1,18 @@
 services:
+  angular:
+    image: node:26-alpine
+  tomcat:
+    image: tomcat/9.0.119-jre25-temurin
   postgis:
     image: postgis/postgis:latest
     ports:
       - "17812:80"
+  mongo:
+    image: mongo:latest
+  grafana:
+    image: grafana/grafana:latest
+  netdata:
+    image: netdata/netdata:latest
+  nginx:
+    image: nginx:latest
+
