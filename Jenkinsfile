@@ -21,7 +21,6 @@ pipeline {
     }
 
     options {
-        cleanWs()
         timestamps()
         ansiColor('xterm')
         timeout(time: 45, unit: 'MINUTES')
