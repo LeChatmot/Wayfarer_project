@@ -7,7 +7,7 @@
     "build": "ng build",
     "watch": "ng build --watch --configuration development",
     "test": "ng test",
-    "test:ci": "ng test --watch=false --coverage --coverage-reporters=lcov,text-summary,html --reporters=default,junit --output-file=reports/junit-vitest.xml",
+    "test:ci": "ng test --watch=false --coverage --coverage-reporters=lcov --coverage-reporters=text-summary --coverage-reporters=html --reporters=default --reporters=junit --output-file=reports/junit-vitest.xml",
     "e2e": "playwright test"
   },
   "prettier": {
