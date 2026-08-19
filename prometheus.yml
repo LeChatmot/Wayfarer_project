@@ -1,0 +1,34 @@
+global:
+  scrape_interval: 15s
+  evaluation_interval: 15s
+  scrape_timeout: 10s
+
+rule_files:
+  - "alert.rules.yml"
+
+scrape_configs:
+  - job_name: 'spring-boot'
+    metrics_path: '/actuator/prometheus'
+    basic_auth:
+      username_file: /run/secrets/prometheus_user
+      password_file: /run/secrets/prometheus_password
+    static_configs:
+      - targets: ['backend:8080']
+
+  - job_name: 'postgres'
+    static_configs:
+      - targets: ['postgres-exporter:9187']
+    metrics_path: '/metrics'
+
+  - job_name: 'netdata'
+    metrics_path: '/api/v1/allmetrics'
+    params:
+      format: ['prometheus']
+    static_configs:
+      - targets: ['netdata:19999']
+    scrape_interval: 5s
+    scrape_timeout: 5s
+
+  - job_name: 'cadvisor'
+    static_configs:
+      - targets: ['cadvisor:8080']

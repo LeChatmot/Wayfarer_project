@@ -1,0 +1,57 @@
+<div class="search-container" [class.has-results]="hasResults">
+  <div class="search-box">
+    <mat-form-field class="search-field">
+      <mat-label>Rechercher un lieu</mat-label>
+      <input
+        matInput
+        [formControl]="searchControl"
+        placeholder="Montagne, ville, village..."
+        (keyup.enter)="onSearch()"
+      >
+      @if (isLoading) {
+        <mat-spinner matSuffix diameter="20"></mat-spinner>
+      } @else {
+        <button
+          matSuffix
+          mat-icon-button
+          (click)="onSearch()"
+          [disabled]="isLoading"
+          type="button"
+          class="search-button"
+        >
+          <mat-icon>search</mat-icon>
+        </button>
+      }
+    </mat-form-field>
+
+    @if (error) {
+      <div class="search-error">
+        <mat-icon>error_outline</mat-icon>
+        <span>{{ error }}</span>
+      </div>
+    }
+  </div>
+
+  @if (hasResults) {
+    <div class="search-results">
+      @for (result of results; track result.name + result.latitude) {
+        <div
+          class="search-result-item"
+          (click)="selectLocation(result)"
+          role="option"
+          tabindex="0"
+          (keyup.enter)="selectLocation(result)"
+        >
+          <mat-icon class="result-icon">location_on</mat-icon>
+          <div class="result-content">
+            <span class="result-name">{{ result.name }}</span>
+            <span class="result-type">{{ result.type }}</span>
+            <span class="result-coords">
+              {{ result.latitude.toFixed(4) }}, {{ result.longitude.toFixed(4) }}
+            </span>
+          </div>
+        </div>
+      }
+    </div>
+  }
+</div>

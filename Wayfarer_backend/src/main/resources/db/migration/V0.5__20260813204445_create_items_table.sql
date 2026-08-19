@@ -1,0 +1,9 @@
+CREATE TABLE IF NOT EXISTS items(
+    id BIGSERIAL PRIMARY KEY,
+    item_list_id BIGSERIAL NOT NULL,
+    name VARCHAR(60) NOT NULL,
+    quantity INTEGER,
+    CONSTRAINT fk_item_list
+        FOREIGN KEY(item_list_id)
+            REFERENCES items_lists(id)
+);

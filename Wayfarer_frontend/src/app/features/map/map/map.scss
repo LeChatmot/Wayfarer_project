@@ -1,0 +1,19 @@
+.map-wrapper {
+  position: relative;
+  height: 100vh;
+  width: 100%;
+}
+
+.map-search-overlay {
+  position: absolute;
+  top: 16px;
+  left: 16px;
+  z-index: 1001;
+  width: 320px;
+  max-width: calc(100vw - 32px);
+}
+
+.map-container {
+  height: 100%;
+  width: 100%;
+}

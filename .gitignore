@@ -1,4 +1,6 @@
 .idea
 .idea/*
 
-.env
+.env*
+secrets/*.txt
+!secrets/.gitkeep

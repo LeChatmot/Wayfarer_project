@@ -1,0 +1,9 @@
+<div class="map-wrapper">
+  <div class="map-search-overlay">
+    <app-search-bar-location
+      (locationSelected)="onLocationSelected($event)"
+    ></app-search-bar-location>
+  </div>
+
+  <div id="map-container" class="map-container"></div>
+</div>

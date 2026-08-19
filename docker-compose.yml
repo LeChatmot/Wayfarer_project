@@ -1,5 +1,240 @@
 services:
-  postgis:
-    image: postgis/postgis:latest
+  postgres:
+    image: postgis/postgis:15-3.3
+    container_name: postgres-wayfarer-project
+    secrets:
+      - postgres_user
+      - postgres_password
+    environment:
+      POSTGRES_USER_FILE: /run/secrets/postgres_user
+      POSTGRES_PASSWORD_FILE: /run/secrets/postgres_password
+      POSTGRES_DB: wayfarer
+    volumes:
+      - postgres_data:/var/lib/postgresql/data
     ports:
-      - "17812:80"
+      - "57533:5432"
+    networks:
+      - backend-network
+    healthcheck:
+      test: [ "CMD-SHELL", "pg_isready -U $$(cat /run/secrets/postgres_user) -d $${POSTGRES_DB}" ]
+      interval: 5s
+      timeout: 5s
+      retries: 15
+
+  backend:
+    build: ./Wayfarer_backend
+    container_name: backend-wayfarer-project
+    secrets:
+      - postgres_user
+      - postgres_password
+      - prometheus_password
+      - prometheus_user
+      - jwt_secret
+    depends_on:
+      postgres:
+        condition: service_healthy
+    environment:
+      SERVER_PORT: 8080
+      POSTGRES_HOST: postgres
+      POSTGRES_PORT: 5432
+      POSTGRES_DB: wayfarer
+      LOGGING_CONFIG: /config/logback-spring.xml
+    volumes:
+      - ./Wayfarer_backend/src/main/resources/logback-spring.xml:/config/logback-spring.xml:ro
+    ports:
+      - "8080"
+    networks:
+      - backend-network
+      - frontend-network
+    restart: unless-stopped
+
+  frontend:
+    build: ./Wayfarer_frontend
+    container_name: frontend-wayfarer-project
+    volumes:
+      - ./nginx/certs:/etc/nginx/certs:ro
+    ports:
+      - "80:80"
+      - "443:443"
+    networks:
+      - frontend-network
+    restart: unless-stopped
+
+  cadvisor:
+    image: gcr.io/cadvisor/cadvisor:v0.47.2
+    container_name: cadvisor-wayfarer
+    privileged: true
+    devices:
+      - /dev/kmsg:/dev/kmsg
+    volumes:
+      - /:/rootfs:ro
+      - /var/run:/var/run:ro
+      - /sys:/sys:ro
+      - /var/lib/docker:/var/lib/docker:ro
+      - /dev/disk:/dev/disk:ro
+    networks:
+      - backend-network
+    restart: unless-stopped
+
+  postgres-exporter:
+    image: prometheuscommunity/postgres-exporter:v0.15.0
+    container_name: postgres-exporter-wayfarer
+    entrypoint: [ "/usr/local/bin/entrypoint-postgres-exporter.sh" ]
+    volumes:
+      - ./scripts/entrypoint-postgres-exporter.sh:/usr/local/bin/entrypoint-postgres-exporter.sh:ro
+    secrets:
+      - postgres_user
+      - postgres_password
+    ports:
+      - "9187:9187"
+    networks:
+      - backend-network
+    depends_on:
+      postgres:
+        condition: service_healthy
+    restart: unless-stopped
+
+  prometheus:
+    image: prom/prometheus:v2.54.1
+    container_name: prometheus-wayfarer
+    secrets:
+      - prometheus_user
+      - prometheus_password
+    volumes:
+      - ./prometheus.yml:/etc/prometheus/prometheus.yml:ro
+      - ./secrets/prometheus_password.txt:/etc/prometheus/secrets/prometheus_password.txt:ro
+      - ./secrets/prometheus_user.txt:/etc/prometheus/secrets/prometheus_user.txt:ro
+      - prometheus_data:/prometheus
+    command:
+      - '--config.file=/etc/prometheus/prometheus.yml'
+      - '--storage.tsdb.path=/prometheus'
+      - '--storage.tsdb.retention.time=200h'
+      - '--web.enable-lifecycle'
+      - '--web.console.libraries=/usr/share/prometheus/console_libraries'
+      - '--web.console.templates=/usr/share/prometheus/consoles'
+    ports:
+      - "9090:9090"
+    networks:
+      - backend-network
+    restart: unless-stopped
+
+  loki:
+    image: grafana/loki:2.9.4
+    container_name: loki-wayfarer
+    ports:
+      - "3100:3100"
+    volumes:
+      - ./loki-config.yml:/etc/loki/loki-config.yml:ro
+      - loki_data:/loki
+    command: -config.file=/etc/loki/loki-config.yml
+    networks:
+      - backend-network
+    healthcheck:
+      test: [ "CMD", "wget", "--spider", "-q", "http://localhost:3100/ready" ]
+      interval: 5s
+      timeout: 5s
+      retries: 15
+    restart: unless-stopped
+    labels:
+      - "traefik.enable=false"
+
+  promtail:
+    image: grafana/promtail:2.9.4
+    container_name: promtail-wayfarer
+    volumes:
+      - /var/log:/var/log:ro
+      - ./promtail.yml:/etc/promtail/config.yml:ro
+      - /var/lib/docker/containers:/var/lib/docker/containers:ro
+    command: -config.file=/etc/promtail/config.yml
+    networks:
+      - backend-network
+    depends_on:
+      - loki
+    restart: unless-stopped
+
+  grafana:
+    image: grafana/grafana:latest
+    container_name: grafana-wayfarer
+    secrets:
+      - grafana_admin_password
+      - prometheus_user
+      - prometheus_password
+      - postgres_user
+      - postgres_password
+    env_file:
+      - .env.grafana
+    environment:
+      - GF_SECURITY_ADMIN_USER=admin
+    volumes:
+      - ./grafana/provisioning:/etc/grafana/provisioning:ro
+      - ./grafana/dashboards:/var/lib/grafana/dashboards:ro
+      - grafana_data:/var/lib/grafana
+    ports:
+      - "3000:3000"
+    depends_on:
+      prometheus:
+        condition: service_started
+      loki:
+        condition: service_healthy
+      postgres:
+        condition: service_healthy
+    networks:
+      - backend-network
+    healthcheck:
+      test: [ "CMD", "wget", "--spider", "-q", "http://localhost:3000/api/health" ]
+      interval: 10s
+      timeout: 5s
+      retries: 10
+    restart: unless-stopped
+
+  netdata:
+    image: netdata/netdata:v1.46.3
+    container_name: netdata-wayfarer
+    cap_add:
+      - SYS_PTRACE
+      - SYS_ADMIN
+    security_opt:
+      - apparmor:unconfined
+    volumes:
+      - /:/rootfs:ro
+      - /var/run:/var/run:ro
+      - /sys:/sys:ro
+      - /var/lib/docker:/var/lib/docker:ro
+      - /dev/disk:/dev/disk:ro
+      - netdata_config:/etc/netdata
+      - netdata_lib:/var/lib/netdata
+      - netdata_cache:/var/cache/netdata
+    ports:
+      - "19999:19999"
+    networks:
+      - backend-network
+    restart: unless-stopped
+
+secrets:
+  postgres_user:
+    file: ./secrets/postgres_user.txt
+  postgres_password:
+    file: ./secrets/postgres_password.txt
+  prometheus_user:
+    file: ./secrets/prometheus_user.txt
+  prometheus_password:
+    file: ./secrets/prometheus_password.txt
+  grafana_admin_password:
+    file: ./secrets/grafana_admin_password.txt
+  jwt_secret:
+    file: ./secrets/jwt_secret.txt
+
+networks:
+  backend-network:
+    driver: bridge
+  frontend-network:
+    driver: bridge
+
+volumes:
+  postgres_data:
+  prometheus_data:
+  grafana_data:
+  netdata_config:
+  netdata_lib:
+  netdata_cache:
+  loki_data:

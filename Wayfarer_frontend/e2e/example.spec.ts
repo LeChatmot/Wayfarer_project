@@ -1,18 +1,30 @@
 import { test, expect } from '@playwright/test';
 
-test('has title', async ({ page }) => {
-  await page.goto('https://playwright.dev/');
+test.describe('Parcours de disponibilite applicative', () => {
+  test("la page d'accueil se charge et affiche la carte", async ({ page }) => {
+    await page.goto('/');
+    await expect(page.locator('.leaflet-container')).toBeVisible({ timeout: 15000 });
+  });
 
-  // Expect a title "to contain" a substring.
-  await expect(page).toHaveTitle(/Playwright/);
-});
+  test('les tuiles cartographiques sont chargees depuis le fournisseur', async ({ page }) => {
+    await page.goto('/');
+    await expect(page.locator('.leaflet-tile-loaded').first()).toBeVisible({
+      timeout: 20000,
+    });
+  });
 
-test('get started link', async ({ page }) => {
-  await page.goto('https://playwright.dev/');
+  test("le formulaire d'inscription est accessible et valide les entrees", async ({ page }) => {
+    await page.goto('/register');
+    const submit = page.getByRole('button', { name: /inscri/i });
+    await expect(submit).toBeVisible();
+    await submit.click();
+    await expect(page.locator('mat-error, .error, [role="alert"]').first()).toBeVisible({
+      timeout: 5000,
+    });
+  });
 
-  // Click the get started link.
-  await page.getByRole('link', { name: 'Get started' }).click();
-
-  // Expects page to have a heading with the name of Installation.
-  await expect(page.getByRole('heading', { name: 'Installation' })).toBeVisible();
+  test("l'API backend repond via le reverse proxy", async ({ request }) => {
+    const response = await request.get('/api/map-providers/list');
+    expect([200, 401, 403]).toContain(response.status());
+  });
 });
