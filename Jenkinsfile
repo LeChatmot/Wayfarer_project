@@ -16,7 +16,7 @@ pipeline {
         E2E_HTTPS_PORT = '8443'
         E2E_BASE_URL = "http://localhost:8090"
         PROD_COMPOSE = 'docker-compose.yml'
-        CI= true
+        CI = 'true'
         TESTCONTAINERS_RYUK_DISABLED = 'false'
     }
 
