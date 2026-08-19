@@ -1,4 +1,5 @@
 import * as L from 'leaflet';
+import {GeoJSON} from 'leaflet';
 
 declare module 'leaflet' {
   namespace Control {
