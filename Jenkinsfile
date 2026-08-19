@@ -21,6 +21,7 @@ pipeline {
     }
 
     options {
+        cleanWs()
         timestamps()
         ansiColor('xterm')
         timeout(time: 45, unit: 'MINUTES')
@@ -55,14 +56,15 @@ pipeline {
                 stage('Backend - compile') {
                     steps {
                         dir("${BACKEND_DIR}") {
-                            sh './mvnw -B -ntp verify'
+                            sh 'chmod +x ./mvnw'
+                            sh "./mvnw -B -ntp verify"
                         }
                     }
                 }
                 stage('Frontend - install & build') {
                     steps {
                         dir("${FRONTEND_DIR}") {
-                            sh 'npm ci'
+                            sh 'npm install'
                             sh 'npm run build'
                         }
                     }
