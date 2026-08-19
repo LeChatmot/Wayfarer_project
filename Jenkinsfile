@@ -54,9 +54,11 @@ pipeline {
             parallel {
                 stage('Backend - compile') {
                     steps {
-                        dir("${BACKEND_DIR}") {
-                            sh 'chmod +x ./mvnw'
-                            sh "./mvnw -B -ntp verify"
+                        withEnv(["JAVA_HOME=${tool 'jdk21'}"]) {
+                            dir("${BACKEND_DIR}") {
+                                sh 'chmod +x ./mvnw'
+                                sh './mvnw -B -ntp verify'
+                            }
                         }
                     }
                 }
