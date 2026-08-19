@@ -1,0 +1,24 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<configuration>
+    <include resource="org/springframework/boot/logging/logback/defaults.xml"/>
+
+    <appender name="JSON" class="ch.qos.logback.core.ConsoleAppender">
+        <encoder class="net.logstash.logback.encoder.LogstashEncoder">
+            <customFields>{"app_name":"wayfarer-backend","app_version":"1.0.0"}</customFields>
+            <includeContext>false</includeContext>
+            <springProperty scope="context" name="environment" source="spring.profiles.active" defaultValue="unknown"/>
+            <fieldNames>
+                <timestamp>timestamp</timestamp>
+                <message>message</message>
+                <levelValue>level</levelValue>
+                <logger>logger</logger>
+                <thread>thread</thread>
+                <stack_trace>stack_trace</stack_trace>
+            </fieldNames>
+        </encoder>
+    </appender>
+
+    <root level="INFO">
+        <appender-ref ref="JSON"/>
+    </root>
+</configuration>

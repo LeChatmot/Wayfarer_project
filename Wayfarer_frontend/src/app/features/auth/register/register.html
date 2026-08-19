@@ -1,0 +1,83 @@
+<div class="auth-container">
+  <mat-card class="auth-card">
+    <mat-card-header>
+      <mat-card-title>Créer un compte</mat-card-title>
+      <mat-card-subtitle>Rejoignez Wayfarer et partagez vos randonnées</mat-card-subtitle>
+    </mat-card-header>
+
+    <mat-card-content>
+      <form [formGroup]="registerForm" (ngSubmit)="onSubmit()">
+
+        <mat-form-field appearance="outline">
+          <mat-label>Nom d'utilisateur</mat-label>
+          <input matInput formControlName="username" autocomplete="username">
+          <mat-icon matPrefix>person</mat-icon>
+          @if (username?.hasError('required')) {
+            <mat-error>Le nom d'utilisateur est requis</mat-error>
+          }
+          @if (username?.hasError('minlength')) {
+            <mat-error>Minimum 3 caractères</mat-error>
+          }
+        </mat-form-field>
+
+        <mat-form-field appearance="outline">
+          <mat-label>Email</mat-label>
+          <input matInput type="email" formControlName="email" autocomplete="email">
+          <mat-icon matPrefix>email</mat-icon>
+          @if (email?.hasError('required')) {
+            <mat-error>L'email est requis</mat-error>
+          }
+          @if (email?.hasError('email')) {
+            <mat-error>Format d'email invalide</mat-error>
+          }
+        </mat-form-field>
+
+        <mat-form-field appearance="outline">
+          <mat-label>Mot de passe</mat-label>
+          <input matInput [type]="hidePassword ? 'password' : 'text'" formControlName="password" autocomplete="new-password">
+          <mat-icon matPrefix>lock</mat-icon>
+          <button mat-icon-button matSuffix type="button" (click)="hidePassword = !hidePassword">
+            <mat-icon>{{ hidePassword ? 'visibility_off' : 'visibility' }}</mat-icon>
+          </button>
+          @if (password?.hasError('required')) {
+            <mat-error>Le mot de passe est requis</mat-error>
+          }
+          @if (password?.hasError('minlength')) {
+            <mat-error>Minimum 8 caractères</mat-error>
+          }
+          @if (password?.hasError('weakPassword')) {
+            <mat-error>Doit contenir une majuscule, une minuscule et un chiffre</mat-error>
+          }
+        </mat-form-field>
+
+        <mat-form-field appearance="outline">
+          <mat-label>Confirmer le mot de passe</mat-label>
+          <input matInput [type]="hideConfirmPassword ? 'password' : 'text'" formControlName="confirmPassword" autocomplete="new-password">
+          <mat-icon matPrefix>lock</mat-icon>
+          <button mat-icon-button matSuffix type="button" (click)="hideConfirmPassword = !hideConfirmPassword">
+            <mat-icon>{{ hideConfirmPassword ? 'visibility_off' : 'visibility' }}</mat-icon>
+          </button>
+          @if (registerForm.hasError('passwordMismatch') && confirmPassword?.touched) {
+            <mat-error>Les mots de passe ne correspondent pas</mat-error>
+          }
+        </mat-form-field>
+
+        @if (serverError) {
+          <div class="server-error">{{ serverError }}</div>
+        }
+
+        <button mat-raised-button color="primary" type="submit" [disabled]="isLoading" class="submit-button">
+          @if (isLoading) {
+            <mat-spinner diameter="20"></mat-spinner>
+          } @else {
+            S'inscrire
+          }
+        </button>
+      </form>
+    </mat-card-content>
+
+    <mat-card-actions>
+      <p>Déjà un compte ? <a routerLink="/login">Se connecter</a></p>
+    </mat-card-actions>
+  </mat-card>
+</div>

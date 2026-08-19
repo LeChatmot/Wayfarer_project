@@ -1,0 +1,34 @@
+apiVersion: 1
+
+datasources:
+  - name: Prometheus
+    uid: wayfarer-prometheus
+    type: prometheus
+    access: proxy
+    url: http://prometheus:9090
+    isDefault: true
+    editable: false
+    jsonData:
+      httpMethod: GET
+      timeInterval: 15s
+
+  - name: Loki
+    uid: wayfarer-loki
+    type: loki
+    access: proxy
+    url: http://loki:3100
+    editable: false
+
+  - name: PostgreSQL
+    uid: wayfarer-postgresql
+    type: postgres
+    access: proxy
+    url: postgres:5432
+    user: ${GRAFANA_POSTGRES_USER}
+    editable: false
+    jsonData:
+      database: wayfarer
+      sslmode: disable
+      postgresVersion: 1500
+    secureJsonData:
+      password: ${GRAFANA_POSTGRES_PASSWORD}

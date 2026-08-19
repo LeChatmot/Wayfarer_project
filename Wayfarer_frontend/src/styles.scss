@@ -1,1 +1,66 @@
-/* You can add global styles to this file, and also import other style files */
+@use 'themes/light_theme' as light-theme;
+@use 'themes/dark_theme' as dark-theme;
+@use '@angular/material' as mat;
+
+$wayfarer-light-theme: mat.define-theme((
+  color: (
+    theme-type: light,
+    primary: light-theme.$primary-palette,
+    tertiary: light-theme.$tertiary-palette,
+  ),
+  typography: (
+    brand-family: Sniglet,
+    plain-family: Sniglet,
+  ),
+  density: (
+    scale: 0,
+  ),
+));
+
+$wayfarer-dark-theme: mat.define-theme((
+    color: (
+      theme-type: dark,
+      primary: dark-theme.$primary-palette,
+      tertiary: dark-theme.$tertiary-palette,
+    ),
+    typography: (
+      brand-family: Sniglet,
+      plain-family: Sniglet,
+    ),
+    density: (
+      scale: 0,
+    ),
+  ));
+
+@media (prefers-color-scheme: dark) {
+  html {
+    font-family: Sniglet, sans-serif;
+    @include mat.all-component-themes($wayfarer-dark-theme);
+  }
+
+  .leaflet-tile-pane {
+    @media (prefers-color-scheme: dark) {
+      filter: invert(100%) hue-rotate(180deg) brightness(95%) contrast(90%);
+    }
+  }
+
+  .leaflet-marker-icon,
+  .leaflet-popup,
+  .leaflet-control {
+    filter: invert(100%) hue-rotate(180deg);
+  }
+}
+
+@media (prefers-color-scheme: light) {
+  html {
+    font-family: Sniglet, sans-serif;
+    @include mat.all-component-themes($wayfarer-light-theme);
+  }
+}
+
+html, body {
+  height: 100dvh;
+  width: 100dvw;
+  margin: 0;
+  padding: 0;
+}

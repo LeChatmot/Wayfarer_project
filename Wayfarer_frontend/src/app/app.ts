@@ -1,9 +1,15 @@
-import { Component, signal } from '@angular/core';
-import { RouterOutlet } from '@angular/router';
+import {Component, signal} from '@angular/core';
+import {provideNativeDateAdapter} from '@angular/material/core';
+import {RouterOutlet} from '@angular/router';
+import {Header} from './core/shared/header/header';
 
 @Component({
   selector: 'app-root',
-  imports: [RouterOutlet],
+  providers: [provideNativeDateAdapter()],
+  imports: [
+    RouterOutlet,
+    Header
+  ],
   templateUrl: './app.html',
   styleUrl: './app.scss'
 })

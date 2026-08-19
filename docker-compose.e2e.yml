@@ -1,0 +1,83 @@
+services:
+  postgres:
+    image: postgis/postgis:15-3.3
+    container_name: postgres-wayfarer-e2e
+    secrets:
+      - postgres_user
+      - postgres_password
+    environment:
+      POSTGRES_USER_FILE: /run/secrets/postgres_user
+      POSTGRES_PASSWORD_FILE: /run/secrets/postgres_password
+      POSTGRES_DB: wayfarer
+    networks:
+      - e2e-backend-network
+    healthcheck:
+      test: [ "CMD-SHELL", "pg_isready -U $$(cat /run/secrets/postgres_user) -d $${POSTGRES_DB}" ]
+      interval: 5s
+      timeout: 5s
+      retries: 20
+
+  backend:
+    build:
+      context: ./Wayfarer_backend
+      dockerfile: Dockerfile
+    container_name: backend-wayfarer-e2e
+    secrets:
+      - postgres_user
+      - postgres_password
+      - jwt_secret
+    depends_on:
+      postgres:
+        condition: service_healthy
+    environment:
+      SERVER_PORT: 8080
+      POSTGRES_HOST: postgres
+      POSTGRES_PORT: 5432
+      POSTGRES_DB: wayfarer
+    networks:
+      - e2e-backend-network
+      - e2e-frontend-network
+    healthcheck:
+      test: [ "CMD-SHELL", "wget -q --spider http://localhost:8080/actuator/health || exit 1" ]
+      interval: 10s
+      timeout: 5s
+      retries: 30
+      start_period: 40s
+
+  frontend:
+    build:
+      context: ./Wayfarer_frontend
+      dockerfile: Dockerfile
+    container_name: frontend-wayfarer-e2e
+    volumes:
+      - ./nginx/certs:/etc/nginx/certs:ro
+    depends_on:
+      backend:
+        condition: service_healthy
+    ports:
+      - "${E2E_HTTP_PORT:-8090}:80"
+      - "${E2E_HTTPS_PORT:-8443}:443"
+    networks:
+      - e2e-frontend-network
+    healthcheck:
+      test: [ "CMD-SHELL", "wget -q --spider http://localhost:80/ || exit 1" ]
+      interval: 5s
+      timeout: 5s
+      retries: 30
+
+secrets:
+  postgres_user:
+    file: ./secrets/postgres_user.txt
+  postgres_password:
+    file: ./secrets/postgres_password.txt
+  jwt_secret:
+    file: ./secrets/jwt_secret.txt
+
+networks:
+  e2e-backend-network:
+    driver: bridge
+  e2e-frontend-network:
+    driver: bridge
+
+volumes:
+  postgres_e2e_data:

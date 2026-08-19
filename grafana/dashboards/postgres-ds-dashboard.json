@@ -1,0 +1,4922 @@
+{
+  "annotations": [
+    {
+      "kind": "AnnotationQuery",
+      "spec": {
+        "builtIn": true,
+        "enable": true,
+        "hide": true,
+        "iconColor": "rgba(0, 211, 255, 1)",
+        "name": "Annotations & Alerts",
+        "query": {
+          "group": "grafana",
+          "kind": "DataQuery",
+          "spec": {},
+          "version": "v0"
+        }
+      }
+    }
+  ],
+  "cursorSync": "Off",
+  "description": "A basic dashboard for monitoring PostgreSQL database clusters using collectd v5+, TimescaleDB/PostgreSQL v10+ and Grafana v6+",
+  "editable": true,
+  "elements": {
+    "panel-12": {
+      "kind": "Panel",
+      "spec": {
+        "data": {
+          "kind": "QueryGroup",
+          "spec": {
+            "queries": [
+              {
+                "kind": "PanelQuery",
+                "spec": {
+                  "hidden": false,
+                  "query": {
+                    "datasource": {
+                      "name": "wayfarer-postgresql"
+                    },
+                    "group": "prometheus",
+                    "kind": "DataQuery",
+                    "spec": {
+                      "format": "time_series",
+                      "group": [
+                        {
+                          "params": [
+                            "type_inst"
+                          ],
+                          "type": "column"
+                        },
+                        {
+                          "params": [
+                            "tstamp"
+                          ],
+                          "type": "column"
+                        }
+                      ],
+                      "groupBy": [
+                        {
+                          "params": [
+                            "$__interval"
+                          ],
+                          "type": "time"
+                        },
+                        {
+                          "params": [
+                            "null"
+                          ],
+                          "type": "fill"
+                        }
+                      ],
+                      "metricColumn": "type_inst",
+                      "orderByTime": "ASC",
+                      "policy": "default",
+                      "rawQuery": false,
+                      "rawSql": "SELECT\n  tstamp AS \"time\",\n  type_inst AS metric,\n  avg(value) AS \"value\"\nFROM collectd\nWHERE\n  $__timeFilter(tstamp) AND\n  host = '$host' AND\n  plugin_inst = '$database' AND\n  type = 'pg_numbackends_n' AND\n  plugin = 'postgresql' AND\n  tstamp > $__timeFrom() AND\n  tstamp < $__timeTo()\nGROUP BY type_inst, tstamp,2\nORDER BY 1,2",
+                      "resultFormat": "time_series",
+                      "select": [
+                        [
+                          {
+                            "params": [
+                              "value"
+                            ],
+                            "type": "column"
+                          },
+                          {
+                            "params": [
+                              "avg"
+                            ],
+                            "type": "aggregate"
+                          },
+                          {
+                            "params": [
+                              "value"
+                            ],
+                            "type": "alias"
+                          }
+                        ]
+                      ],
+                      "table": "collectd",
+                      "tags": [],
+                      "timeColumn": "tstamp",
+                      "timeColumnType": "timestamp",
+                      "where": [
+                        {
+                          "name": "$__timeFilter",
+                          "params": [],
+                          "type": "macro"
+                        },
+                        {
+                          "datatype": "varchar",
+                          "name": "",
+                          "params": [
+                            "host",
+                            "=",
+                            "'$host'"
+                          ],
+                          "type": "expression"
+                        },
+                        {
+                          "datatype": "varchar",
+                          "name": "",
+                          "params": [
+                            "plugin_inst",
+                            "=",
+                            "'$database'"
+                          ],
+                          "type": "expression"
+                        },
+                        {
+                          "datatype": "varchar",
+                          "name": "",
+                          "params": [
+                            "type",
+                            "=",
+                            "'pg_numbackends_n'"
+                          ],
+                          "type": "expression"
+                        },
+                        {
+                          "datatype": "varchar",
+                          "name": "",
+                          "params": [
+                            "plugin",
+                            "=",
+                            "'postgresql'"
+                          ],
+                          "type": "expression"
+                        },
+                        {
+                          "datatype": "timestamptz",
+                          "name": "",
+                          "params": [
+                            "tstamp",
+                            ">",
+                            "$__timeFrom()"
+                          ],
+                          "type": "expression"
+                        },
+                        {
+                          "datatype": "timestamptz",
+                          "name": "",
+                          "params": [
+                            "tstamp",
+                            "<",
+                            "$__timeTo()"
+                          ],
+                          "type": "expression"
+                        }
+                      ]
+                    },
+                    "version": "v0"
+                  },
+                  "refId": "A"
+                }
+              }
+            ],
+            "queryOptions": {},
+            "transformations": []
+          }
+        },
+        "description": "",
+        "id": 12,
+        "links": [],
+        "title": "Database Connections",
+        "vizConfig": {
+          "group": "timeseries",
+          "kind": "VizConfig",
+          "spec": {
+            "fieldConfig": {
+              "defaults": {
+                "color": {
+                  "mode": "palette-classic"
+                },
+                "custom": {
+                  "axisBorderShow": false,
+                  "axisCenteredZero": false,
+                  "axisColorMode": "text",
+                  "axisLabel": "",
+                  "axisPlacement": "auto",
+                  "barAlignment": 0,
+                  "barWidthFactor": 0.6,
+                  "drawStyle": "line",
+                  "fillOpacity": 10,
+                  "gradientMode": "none",
+                  "hideFrom": {
+                    "legend": false,
+                    "tooltip": false,
+                    "viz": false
+                  },
+                  "insertNulls": false,
+                  "lineInterpolation": "linear",
+                  "lineWidth": 1,
+                  "pointSize": 5,
+                  "scaleDistribution": {
+                    "type": "linear"
+                  },
+                  "showPoints": "never",
+                  "showValues": false,
+                  "spanNulls": false,
+                  "stacking": {
+                    "group": "A",
+                    "mode": "none"
+                  },
+                  "thresholdsStyle": {
+                    "mode": "off"
+                  }
+                },
+                "thresholds": {
+                  "mode": "absolute",
+                  "steps": [
+                    {
+                      "color": "green",
+                      "value": 0
+                    },
+                    {
+                      "color": "red",
+                      "value": 80
+                    }
+                  ]
+                },
+                "unit": "short"
+              },
+              "overrides": []
+            },
+            "options": {
+              "annotations": {
+                "clustering": -1,
+                "multiLane": false
+              },
+              "legend": {
+                "calcs": [
+                  "lastNotNull"
+                ],
+                "displayMode": "table",
+                "enableFacetedFilter": false,
+                "overflow": "ellipsis",
+                "placement": "right",
+                "showLegend": true
+              },
+              "tooltip": {
+                "hideZeros": false,
+                "mode": "multi",
+                "sort": "none"
+              }
+            }
+          },
+          "version": "13.1.0"
+        }
+      }
+    },
+    "panel-13": {
+      "kind": "Panel",
+      "spec": {
+        "data": {
+          "kind": "QueryGroup",
+          "spec": {
+            "queries": [
+              {
+                "kind": "PanelQuery",
+                "spec": {
+                  "hidden": false,
+                  "query": {
+                    "datasource": {
+                      "name": "wayfarer-postgresql"
+                    },
+                    "group": "prometheus",
+                    "kind": "DataQuery",
+                    "spec": {
+                      "format": "time_series",
+                      "group": [
+                        {
+                          "params": [
+                            "type_inst"
+                          ],
+                          "type": "column"
+                        },
+                        {
+                          "params": [
+                            "tstamp"
+                          ],
+                          "type": "column"
+                        }
+                      ],
+                      "groupBy": [
+                        {
+                          "params": [
+                            "$__interval"
+                          ],
+                          "type": "time"
+                        },
+                        {
+                          "params": [
+                            "null"
+                          ],
+                          "type": "fill"
+                        }
+                      ],
+                      "metricColumn": "type_inst",
+                      "orderByTime": "ASC",
+                      "policy": "default",
+                      "rawQuery": false,
+                      "rawSql": "SELECT\n  tstamp AS \"time\",\n  type_inst AS metric,\n  (CASE WHEN last(value,tstamp) >= lag(last(value,tstamp)) OVER (PARTITION BY type_inst ORDER BY tstamp) THEN last(value,tstamp) - lag(last(value,tstamp)) OVER (PARTITION BY type_inst ORDER BY tstamp) WHEN lag(last(value,tstamp)) OVER (PARTITION BY type_inst ORDER BY tstamp) IS NULL THEN NULL ELSE last(value,tstamp) END)/extract(epoch from min(tstamp) - lag(min(tstamp)) OVER (PARTITION BY type_inst ORDER BY tstamp)) AS \"value\"\nFROM collectd\nWHERE\n  $__timeFilter(tstamp) AND\n  host = '$host' AND\n  plugin_inst = '$database' AND\n  plugin = 'postgresql' AND\n  type = 'pg_xact' AND\n  tstamp > $__timeFrom() AND\n  tstamp < $__timeTo()\nGROUP BY type_inst, tstamp,2\nORDER BY 1,2",
+                      "resultFormat": "time_series",
+                      "select": [
+                        [
+                          {
+                            "params": [
+                              "value"
+                            ],
+                            "type": "column"
+                          },
+                          {
+                            "params": [
+                              "last"
+                            ],
+                            "type": "aggregate"
+                          },
+                          {
+                            "params": [
+                              "rate"
+                            ],
+                            "type": "window"
+                          },
+                          {
+                            "params": [
+                              "value"
+                            ],
+                            "type": "alias"
+                          }
+                        ]
+                      ],
+                      "table": "collectd",
+                      "tags": [],
+                      "timeColumn": "tstamp",
+                      "timeColumnType": "timestamp",
+                      "where": [
+                        {
+                          "name": "$__timeFilter",
+                          "params": [],
+                          "type": "macro"
+                        },
+                        {
+                          "datatype": "varchar",
+                          "name": "",
+                          "params": [
+                            "host",
+                            "=",
+                            "'$host'"
+                          ],
+                          "type": "expression"
+                        },
+                        {
+                          "datatype": "varchar",
+                          "name": "",
+                          "params": [
+                            "plugin_inst",
+                            "=",
+                            "'$database'"
+                          ],
+                          "type": "expression"
+                        },
+                        {
+                          "datatype": "varchar",
+                          "name": "",
+                          "params": [
+                            "plugin",
+                            "=",
+                            "'postgresql'"
+                          ],
+                          "type": "expression"
+                        },
+                        {
+                          "datatype": "varchar",
+                          "name": "",
+                          "params": [
+                            "type",
+                            "=",
+                            "'pg_xact'"
+                          ],
+                          "type": "expression"
+                        },
+                        {
+                          "datatype": "timestamptz",
+                          "name": "",
+                          "params": [
+                            "tstamp",
+                            ">",
+                            "$__timeFrom()"
+                          ],
+                          "type": "expression"
+                        },
+                        {
+                          "datatype": "timestamptz",
+                          "name": "",
+                          "params": [
+                            "tstamp",
+                            "<",
+                            "$__timeTo()"
+                          ],
+                          "type": "expression"
+                        }
+                      ]
+                    },
+                    "version": "v0"
+                  },
+                  "refId": "A"
+                }
+              },
+              {
+                "kind": "PanelQuery",
+                "spec": {
+                  "hidden": true,
+                  "query": {
+                    "datasource": {
+                      "name": "wayfarer-postgresql"
+                    },
+                    "group": "prometheus",
+                    "kind": "DataQuery",
+                    "spec": {
+                      "format": "time_series",
+                      "group": [
+                        {
+                          "params": [
+                            "type_inst"
+                          ],
+                          "type": "column"
+                        },
+                        {
+                          "params": [
+                            "tstamp"
+                          ],
+                          "type": "column"
+                        },
+                        {
+                          "params": [
+                            "identifier"
+                          ],
+                          "type": "column"
+                        }
+                      ],
+                      "groupBy": [
+                        {
+                          "params": [
+                            "$__interval"
+                          ],
+                          "type": "time"
+                        },
+                        {
+                          "params": [
+                            "null"
+                          ],
+                          "type": "fill"
+                        }
+                      ],
+                      "metricColumn": "plugin_inst",
+                      "orderByTime": "ASC",
+                      "policy": "default",
+                      "rawQuery": false,
+                      "rawSql": "SELECT\n  tstamp AS \"time\",\n  plugin_inst AS metric,\n  last(value,tstamp) AS \"value\"\nFROM collectd\nWHERE\n  $__timeFilter(tstamp) AND\n  host = '$host' AND\n  plugin = 'df' AND\n  type = 'df_complex' AND\n  type_inst = value\nGROUP BY type_inst, tstamp, identifier,2\nORDER BY 1,2",
+                      "resultFormat": "time_series",
+                      "select": [
+                        [
+                          {
+                            "params": [
+                              "value"
+                            ],
+                            "type": "column"
+                          },
+                          {
+                            "params": [
+                              "last"
+                            ],
+                            "type": "aggregate"
+                          },
+                          {
+                            "params": [
+                              "value"
+                            ],
+                            "type": "alias"
+                          }
+                        ]
+                      ],
+                      "table": "collectd",
+                      "tags": [],
+                      "timeColumn": "tstamp",
+                      "timeColumnType": "timestamp",
+                      "where": [
+                        {
+                          "name": "$__timeFilter",
+                          "params": [],
+                          "type": "macro"
+                        },
+                        {
+                          "datatype": "varchar",
+                          "name": "",
+                          "params": [
+                            "host",
+                            "=",
+                            "'$host'"
+                          ],
+                          "type": "expression"
+                        },
+                        {
+                          "datatype": "varchar",
+                          "name": "",
+                          "params": [
+                            "plugin",
+                            "=",
+                            "'df'"
+                          ],
+                          "type": "expression"
+                        },
+                        {
+                          "datatype": "varchar",
+                          "name": "",
+                          "params": [
+                            "type",
+                            "=",
+                            "'df_complex'"
+                          ],
+                          "type": "expression"
+                        },
+                        {
+                          "datatype": "varchar",
+                          "name": "",
+                          "params": [
+                            "type_inst",
+                            "=",
+                            "value"
+                          ],
+                          "type": "expression"
+                        }
+                      ]
+                    },
+                    "version": "v0"
+                  },
+                  "refId": "B"
+                }
+              }
+            ],
+            "queryOptions": {},
+            "transformations": []
+          }
+        },
+        "description": "",
+        "id": 13,
+        "links": [],
+        "title": "Commit/Rollback",
+        "vizConfig": {
+          "group": "timeseries",
+          "kind": "VizConfig",
+          "spec": {
+            "fieldConfig": {
+              "defaults": {
+                "color": {
+                  "mode": "palette-classic"
+                },
+                "custom": {
+                  "axisBorderShow": false,
+                  "axisCenteredZero": false,
+                  "axisColorMode": "text",
+                  "axisLabel": "",
+                  "axisPlacement": "auto",
+                  "barAlignment": 0,
+                  "barWidthFactor": 0.6,
+                  "drawStyle": "line",
+                  "fillOpacity": 10,
+                  "gradientMode": "none",
+                  "hideFrom": {
+                    "legend": false,
+                    "tooltip": false,
+                    "viz": false
+                  },
+                  "insertNulls": false,
+                  "lineInterpolation": "linear",
+                  "lineWidth": 1,
+                  "pointSize": 5,
+                  "scaleDistribution": {
+                    "type": "linear"
+                  },
+                  "showPoints": "never",
+                  "showValues": false,
+                  "spanNulls": false,
+                  "stacking": {
+                    "group": "A",
+                    "mode": "none"
+                  },
+                  "thresholdsStyle": {
+                    "mode": "off"
+                  }
+                },
+                "decimals": -1,
+                "thresholds": {
+                  "mode": "absolute",
+                  "steps": [
+                    {
+                      "color": "green",
+                      "value": 0
+                    },
+                    {
+                      "color": "red",
+                      "value": 80
+                    }
+                  ]
+                },
+                "unit": "short"
+              },
+              "overrides": []
+            },
+            "options": {
+              "annotations": {
+                "clustering": -1,
+                "multiLane": false
+              },
+              "legend": {
+                "calcs": [
+                  "lastNotNull"
+                ],
+                "displayMode": "table",
+                "enableFacetedFilter": false,
+                "overflow": "ellipsis",
+                "placement": "right",
+                "showLegend": true
+              },
+              "tooltip": {
+                "hideZeros": false,
+                "mode": "multi",
+                "sort": "none"
+              }
+            }
+          },
+          "version": "13.1.0"
+        }
+      }
+    },
+    "panel-15": {
+      "kind": "Panel",
+      "spec": {
+        "data": {
+          "kind": "QueryGroup",
+          "spec": {
+            "queries": [
+              {
+                "kind": "PanelQuery",
+                "spec": {
+                  "hidden": false,
+                  "query": {
+                    "datasource": {
+                      "name": "wayfarer-postgresql"
+                    },
+                    "group": "prometheus",
+                    "kind": "DataQuery",
+                    "spec": {
+                      "format": "time_series",
+                      "group": [
+                        {
+                          "params": [
+                            "$__interval",
+                            "none"
+                          ],
+                          "type": "time"
+                        }
+                      ],
+                      "groupBy": [
+                        {
+                          "params": [
+                            "$__interval"
+                          ],
+                          "type": "time"
+                        },
+                        {
+                          "params": [
+                            "null"
+                          ],
+                          "type": "fill"
+                        }
+                      ],
+                      "metricColumn": "type",
+                      "orderByTime": "ASC",
+                      "policy": "default",
+                      "rawQuery": false,
+                      "rawSql": "SELECT\n  $__timeGroupAlias(tstamp,$__interval),\n  type AS metric,\n  last(value,tstamp) AS \"value\"\nFROM collectd\nWHERE\n  $__timeFilter(tstamp) AND\n  host = '$host' AND\n  plugin_inst = '$database' AND\n  plugin = 'postgresql' AND\n  type = 'pg_db_size' AND\n  tstamp > $__timeFrom() AND\n  tstamp <  $__timeTo()\nGROUP BY 1,2\nORDER BY 1,2",
+                      "resultFormat": "time_series",
+                      "select": [
+                        [
+                          {
+                            "params": [
+                              "value"
+                            ],
+                            "type": "column"
+                          },
+                          {
+                            "params": [
+                              "last"
+                            ],
+                            "type": "aggregate"
+                          },
+                          {
+                            "params": [
+                              "value"
+                            ],
+                            "type": "alias"
+                          }
+                        ]
+                      ],
+                      "table": "collectd",
+                      "tags": [],
+                      "timeColumn": "tstamp",
+                      "timeColumnType": "timestamp",
+                      "where": [
+                        {
+                          "name": "$__timeFilter",
+                          "params": [],
+                          "type": "macro"
+                        },
+                        {
+                          "datatype": "varchar",
+                          "name": "",
+                          "params": [
+                            "host",
+                            "=",
+                            "'$host'"
+                          ],
+                          "type": "expression"
+                        },
+                        {
+                          "datatype": "varchar",
+                          "name": "",
+                          "params": [
+                            "plugin_inst",
+                            "=",
+                            "'$database'"
+                          ],
+                          "type": "expression"
+                        },
+                        {
+                          "datatype": "varchar",
+                          "name": "",
+                          "params": [
+                            "plugin",
+                            "=",
+                            "'postgresql'"
+                          ],
+                          "type": "expression"
+                        },
+                        {
+                          "datatype": "varchar",
+                          "name": "",
+                          "params": [
+                            "type",
+                            "=",
+                            "'pg_db_size'"
+                          ],
+                          "type": "expression"
+                        },
+                        {
+                          "datatype": "timestamptz",
+                          "name": "",
+                          "params": [
+                            "tstamp",
+                            ">",
+                            "$__timeFrom()"
+                          ],
+                          "type": "expression"
+                        },
+                        {
+                          "datatype": "timestamptz",
+                          "name": "",
+                          "params": [
+                            "tstamp",
+                            "<",
+                            " $__timeTo()"
+                          ],
+                          "type": "expression"
+                        }
+                      ]
+                    },
+                    "version": "v0"
+                  },
+                  "refId": "A"
+                }
+              }
+            ],
+            "queryOptions": {
+              "maxDataPoints": 100
+            },
+            "transformations": []
+          }
+        },
+        "description": "",
+        "id": 15,
+        "links": [],
+        "title": "Database Size",
+        "vizConfig": {
+          "group": "stat",
+          "kind": "VizConfig",
+          "spec": {
+            "fieldConfig": {
+              "defaults": {
+                "mappings": [
+                  {
+                    "options": {
+                      "match": "null",
+                      "result": {
+                        "text": "N/A"
+                      }
+                    },
+                    "type": "special"
+                  }
+                ],
+                "thresholds": {
+                  "mode": "absolute",
+                  "steps": [
+                    {
+                      "color": "green",
+                      "value": 0
+                    },
+                    {
+                      "color": "red",
+                      "value": 80
+                    }
+                  ]
+                },
+                "unit": "decbytes"
+              },
+              "overrides": []
+            },
+            "options": {
+              "colorMode": "none",
+              "graphMode": "none",
+              "justifyMode": "auto",
+              "orientation": "horizontal",
+              "percentChangeColorMode": "standard",
+              "reduceOptions": {
+                "calcs": [
+                  "lastNotNull"
+                ],
+                "fields": "",
+                "values": false
+              },
+              "showPercentChange": false,
+              "textMode": "auto",
+              "wideLayout": true
+            }
+          },
+          "version": "13.1.0"
+        }
+      }
+    },
+    "panel-16": {
+      "kind": "Panel",
+      "spec": {
+        "data": {
+          "kind": "QueryGroup",
+          "spec": {
+            "queries": [
+              {
+                "kind": "PanelQuery",
+                "spec": {
+                  "hidden": false,
+                  "query": {
+                    "datasource": {
+                      "name": "wayfarer-postgresql"
+                    },
+                    "group": "prometheus",
+                    "kind": "DataQuery",
+                    "spec": {
+                      "format": "time_series",
+                      "group": [
+                        {
+                          "params": [
+                            "$__interval",
+                            "none"
+                          ],
+                          "type": "time"
+                        }
+                      ],
+                      "groupBy": [
+                        {
+                          "params": [
+                            "$__interval"
+                          ],
+                          "type": "time"
+                        },
+                        {
+                          "params": [
+                            "null"
+                          ],
+                          "type": "fill"
+                        }
+                      ],
+                      "metricColumn": "type",
+                      "orderByTime": "ASC",
+                      "policy": "default",
+                      "rawQuery": false,
+                      "rawSql": "SELECT\n  $__timeGroupAlias(tstamp,$__interval),\n  type AS metric,\n  last(value,tstamp) AS \"value\"\nFROM collectd\nWHERE\n  $__timeFilter(tstamp) AND\n  host = '$host' AND\n  plugin_inst = '$database' AND\n  plugin = 'postgresql' AND\n  type = 'pg_db_vac_age' AND\n  tstamp > $__timeFrom() AND\n  tstamp <  $__timeTo()\nGROUP BY 1,2\nORDER BY 1,2",
+                      "resultFormat": "time_series",
+                      "select": [
+                        [
+                          {
+                            "params": [
+                              "value"
+                            ],
+                            "type": "column"
+                          },
+                          {
+                            "params": [
+                              "last"
+                            ],
+                            "type": "aggregate"
+                          },
+                          {
+                            "params": [
+                              "value"
+                            ],
+                            "type": "alias"
+                          }
+                        ]
+                      ],
+                      "table": "collectd",
+                      "tags": [],
+                      "timeColumn": "tstamp",
+                      "timeColumnType": "timestamp",
+                      "where": [
+                        {
+                          "name": "$__timeFilter",
+                          "params": [],
+                          "type": "macro"
+                        },
+                        {
+                          "datatype": "varchar",
+                          "name": "",
+                          "params": [
+                            "host",
+                            "=",
+                            "'$host'"
+                          ],
+                          "type": "expression"
+                        },
+                        {
+                          "datatype": "varchar",
+                          "name": "",
+                          "params": [
+                            "plugin_inst",
+                            "=",
+                            "'$database'"
+                          ],
+                          "type": "expression"
+                        },
+                        {
+                          "datatype": "varchar",
+                          "name": "",
+                          "params": [
+                            "plugin",
+                            "=",
+                            "'postgresql'"
+                          ],
+                          "type": "expression"
+                        },
+                        {
+                          "datatype": "varchar",
+                          "name": "",
+                          "params": [
+                            "type",
+                            "=",
+                            "'pg_db_vac_age'"
+                          ],
+                          "type": "expression"
+                        },
+                        {
+                          "datatype": "timestamptz",
+                          "name": "",
+                          "params": [
+                            "tstamp",
+                            ">",
+                            "$__timeFrom()"
+                          ],
+                          "type": "expression"
+                        },
+                        {
+                          "datatype": "timestamptz",
+                          "name": "",
+                          "params": [
+                            "tstamp",
+                            "<",
+                            " $__timeTo()"
+                          ],
+                          "type": "expression"
+                        }
+                      ]
+                    },
+                    "version": "v0"
+                  },
+                  "refId": "A"
+                }
+              }
+            ],
+            "queryOptions": {
+              "maxDataPoints": 100
+            },
+            "transformations": []
+          }
+        },
+        "description": "",
+        "id": 16,
+        "links": [],
+        "title": "xacts since last vacuum",
+        "vizConfig": {
+          "group": "stat",
+          "kind": "VizConfig",
+          "spec": {
+            "fieldConfig": {
+              "defaults": {
+                "mappings": [
+                  {
+                    "options": {
+                      "match": "null",
+                      "result": {
+                        "text": "N/A"
+                      }
+                    },
+                    "type": "special"
+                  }
+                ],
+                "thresholds": {
+                  "mode": "absolute",
+                  "steps": [
+                    {
+                      "color": "green",
+                      "value": 0
+                    },
+                    {
+                      "color": "red",
+                      "value": 80
+                    }
+                  ]
+                },
+                "unit": "short"
+              },
+              "overrides": []
+            },
+            "options": {
+              "colorMode": "none",
+              "graphMode": "none",
+              "justifyMode": "auto",
+              "orientation": "horizontal",
+              "percentChangeColorMode": "standard",
+              "reduceOptions": {
+                "calcs": [
+                  "lastNotNull"
+                ],
+                "fields": "",
+                "values": false
+              },
+              "showPercentChange": false,
+              "textMode": "auto",
+              "wideLayout": true
+            }
+          },
+          "version": "13.1.0"
+        }
+      }
+    },
+    "panel-17": {
+      "kind": "Panel",
+      "spec": {
+        "data": {
+          "kind": "QueryGroup",
+          "spec": {
+            "queries": [
+              {
+                "kind": "PanelQuery",
+                "spec": {
+                  "hidden": false,
+                  "query": {
+                    "datasource": {
+                      "name": "wayfarer-postgresql"
+                    },
+                    "group": "prometheus",
+                    "kind": "DataQuery",
+                    "spec": {
+                      "format": "time_series",
+                      "group": [
+                        {
+                          "params": [
+                            "type_inst"
+                          ],
+                          "type": "column"
+                        },
+                        {
+                          "params": [
+                            "tstamp"
+                          ],
+                          "type": "column"
+                        },
+                        {
+                          "params": [
+                            "type_inst"
+                          ],
+                          "type": "column"
+                        }
+                      ],
+                      "groupBy": [
+                        {
+                          "params": [
+                            "$__interval"
+                          ],
+                          "type": "time"
+                        },
+                        {
+                          "params": [
+                            "null"
+                          ],
+                          "type": "fill"
+                        }
+                      ],
+                      "metricColumn": "type_inst",
+                      "orderByTime": "ASC",
+                      "policy": "default",
+                      "rawQuery": false,
+                      "rawSql": "SELECT\n  tstamp AS \"time\",\n  type_inst AS metric,\n  (CASE WHEN last(value,tstamp) >= lag(last(value,tstamp)) OVER (PARTITION BY type_inst ORDER BY tstamp) THEN last(value,tstamp) - lag(last(value,tstamp)) OVER (PARTITION BY type_inst ORDER BY tstamp) WHEN lag(last(value,tstamp)) OVER (PARTITION BY type_inst ORDER BY tstamp) IS NULL THEN NULL ELSE last(value,tstamp) END) AS \"value\"\nFROM collectd\nWHERE\n  $__timeFilter(tstamp) AND\n  host = '$host' AND\n  plugin_inst = '$database' AND\n  plugin = 'postgresql' AND\n  type = 'pg_scan' AND\n  type_inst = 'idx_tup_fetch' AND\n  tstamp > $__timeFrom() AND\n  tstamp <  $__timeTo()\nGROUP BY type_inst, tstamp, type_inst,2\nORDER BY 1,2",
+                      "resultFormat": "time_series",
+                      "select": [
+                        [
+                          {
+                            "params": [
+                              "value"
+                            ],
+                            "type": "column"
+                          },
+                          {
+                            "params": [
+                              "last"
+                            ],
+                            "type": "aggregate"
+                          },
+                          {
+                            "params": [
+                              "increase"
+                            ],
+                            "type": "window"
+                          },
+                          {
+                            "params": [
+                              "value"
+                            ],
+                            "type": "alias"
+                          }
+                        ]
+                      ],
+                      "table": "collectd",
+                      "tags": [],
+                      "timeColumn": "tstamp",
+                      "timeColumnType": "timestamp",
+                      "where": [
+                        {
+                          "name": "$__timeFilter",
+                          "params": [],
+                          "type": "macro"
+                        },
+                        {
+                          "datatype": "varchar",
+                          "name": "",
+                          "params": [
+                            "host",
+                            "=",
+                            "'$host'"
+                          ],
+                          "type": "expression"
+                        },
+                        {
+                          "datatype": "varchar",
+                          "name": "",
+                          "params": [
+                            "plugin_inst",
+                            "=",
+                            "'$database'"
+                          ],
+                          "type": "expression"
+                        },
+                        {
+                          "datatype": "varchar",
+                          "name": "",
+                          "params": [
+                            "plugin",
+                            "=",
+                            "'postgresql'"
+                          ],
+                          "type": "expression"
+                        },
+                        {
+                          "datatype": "varchar",
+                          "name": "",
+                          "params": [
+                            "type",
+                            "=",
+                            "'pg_scan'"
+                          ],
+                          "type": "expression"
+                        },
+                        {
+                          "datatype": "varchar",
+                          "name": "",
+                          "params": [
+                            "type_inst",
+                            "=",
+                            "'idx_tup_fetch'"
+                          ],
+                          "type": "expression"
+                        },
+                        {
+                          "datatype": "timestamptz",
+                          "name": "",
+                          "params": [
+                            "tstamp",
+                            ">",
+                            "$__timeFrom()"
+                          ],
+                          "type": "expression"
+                        },
+                        {
+                          "datatype": "timestamptz",
+                          "name": "",
+                          "params": [
+                            "tstamp",
+                            "<",
+                            " $__timeTo()"
+                          ],
+                          "type": "expression"
+                        }
+                      ]
+                    },
+                    "version": "v0"
+                  },
+                  "refId": "B"
+                }
+              },
+              {
+                "kind": "PanelQuery",
+                "spec": {
+                  "hidden": false,
+                  "query": {
+                    "datasource": {
+                      "name": "wayfarer-postgresql"
+                    },
+                    "group": "prometheus",
+                    "kind": "DataQuery",
+                    "spec": {
+                      "format": "time_series",
+                      "group": [
+                        {
+                          "params": [
+                            "type_inst"
+                          ],
+                          "type": "column"
+                        },
+                        {
+                          "params": [
+                            "tstamp"
+                          ],
+                          "type": "column"
+                        },
+                        {
+                          "params": [
+                            "type_inst"
+                          ],
+                          "type": "column"
+                        }
+                      ],
+                      "groupBy": [
+                        {
+                          "params": [
+                            "$__interval"
+                          ],
+                          "type": "time"
+                        },
+                        {
+                          "params": [
+                            "null"
+                          ],
+                          "type": "fill"
+                        }
+                      ],
+                      "metricColumn": "type_inst",
+                      "orderByTime": "ASC",
+                      "policy": "default",
+                      "rawQuery": false,
+                      "rawSql": "SELECT\n  tstamp AS \"time\",\n  type_inst AS metric,\n  (CASE WHEN last(value,tstamp) >= lag(last(value,tstamp)) OVER (PARTITION BY type_inst ORDER BY tstamp) THEN last(value,tstamp) - lag(last(value,tstamp)) OVER (PARTITION BY type_inst ORDER BY tstamp) WHEN lag(last(value,tstamp)) OVER (PARTITION BY type_inst ORDER BY tstamp) IS NULL THEN NULL ELSE last(value,tstamp) END) AS \"value\"\nFROM collectd\nWHERE\n  $__timeFilter(tstamp) AND\n  host = '$host' AND\n  plugin_inst = '$database' AND\n  plugin = 'postgresql' AND\n  type = 'pg_blks' AND\n  type_inst = 'idx_read' AND\n  tstamp > $__timeFrom() AND\n  tstamp < $__timeTo()\nGROUP BY type_inst, tstamp, type_inst,2\nORDER BY 1,2",
+                      "resultFormat": "time_series",
+                      "select": [
+                        [
+                          {
+                            "params": [
+                              "value"
+                            ],
+                            "type": "column"
+                          },
+                          {
+                            "params": [
+                              "last"
+                            ],
+                            "type": "aggregate"
+                          },
+                          {
+                            "params": [
+                              "increase"
+                            ],
+                            "type": "window"
+                          },
+                          {
+                            "params": [
+                              "value"
+                            ],
+                            "type": "alias"
+                          }
+                        ]
+                      ],
+                      "table": "collectd",
+                      "tags": [],
+                      "timeColumn": "tstamp",
+                      "timeColumnType": "timestamp",
+                      "where": [
+                        {
+                          "name": "$__timeFilter",
+                          "params": [],
+                          "type": "macro"
+                        },
+                        {
+                          "datatype": "varchar",
+                          "name": "",
+                          "params": [
+                            "host",
+                            "=",
+                            "'$host'"
+                          ],
+                          "type": "expression"
+                        },
+                        {
+                          "datatype": "varchar",
+                          "name": "",
+                          "params": [
+                            "plugin_inst",
+                            "=",
+                            "'$database'"
+                          ],
+                          "type": "expression"
+                        },
+                        {
+                          "datatype": "varchar",
+                          "name": "",
+                          "params": [
+                            "plugin",
+                            "=",
+                            "'postgresql'"
+                          ],
+                          "type": "expression"
+                        },
+                        {
+                          "datatype": "varchar",
+                          "name": "",
+                          "params": [
+                            "type",
+                            "=",
+                            "'pg_blks'"
+                          ],
+                          "type": "expression"
+                        },
+                        {
+                          "datatype": "varchar",
+                          "name": "",
+                          "params": [
+                            "type_inst",
+                            "=",
+                            "'idx_read'"
+                          ],
+                          "type": "expression"
+                        },
+                        {
+                          "datatype": "timestamptz",
+                          "name": "",
+                          "params": [
+                            "tstamp",
+                            ">",
+                            "$__timeFrom()"
+                          ],
+                          "type": "expression"
+                        },
+                        {
+                          "datatype": "timestamptz",
+                          "name": "",
+                          "params": [
+                            "tstamp",
+                            "<",
+                            "$__timeTo()"
+                          ],
+                          "type": "expression"
+                        }
+                      ]
+                    },
+                    "version": "v0"
+                  },
+                  "refId": "C"
+                }
+              },
+              {
+                "kind": "PanelQuery",
+                "spec": {
+                  "hidden": false,
+                  "query": {
+                    "datasource": {
+                      "name": "wayfarer-postgresql"
+                    },
+                    "group": "prometheus",
+                    "kind": "DataQuery",
+                    "spec": {
+                      "format": "time_series",
+                      "group": [
+                        {
+                          "params": [
+                            "type_inst"
+                          ],
+                          "type": "column"
+                        },
+                        {
+                          "params": [
+                            "tstamp"
+                          ],
+                          "type": "column"
+                        },
+                        {
+                          "params": [
+                            "type_inst"
+                          ],
+                          "type": "column"
+                        }
+                      ],
+                      "groupBy": [
+                        {
+                          "params": [
+                            "$__interval"
+                          ],
+                          "type": "time"
+                        },
+                        {
+                          "params": [
+                            "null"
+                          ],
+                          "type": "fill"
+                        }
+                      ],
+                      "metricColumn": "type_inst",
+                      "orderByTime": "ASC",
+                      "policy": "default",
+                      "rawQuery": false,
+                      "rawSql": "SELECT\n  tstamp AS \"time\",\n  type_inst AS metric,\n  (CASE WHEN last(value,tstamp) >= lag(last(value,tstamp)) OVER (PARTITION BY type_inst ORDER BY tstamp) THEN last(value,tstamp) - lag(last(value,tstamp)) OVER (PARTITION BY type_inst ORDER BY tstamp) WHEN lag(last(value,tstamp)) OVER (PARTITION BY type_inst ORDER BY tstamp) IS NULL THEN NULL ELSE last(value,tstamp) END) AS \"value\"\nFROM collectd\nWHERE\n  $__timeFilter(tstamp) AND\n  host = '$host' AND\n  plugin_inst = '$database' AND\n  plugin = 'postgresql' AND\n  type = 'pg_n_tup_c' AND\n  type_inst = 'ins' AND\n  tstamp > $__timeFrom() AND\n  tstamp < $__timeTo()\nGROUP BY type_inst, tstamp, type_inst,2\nORDER BY 1,2",
+                      "resultFormat": "time_series",
+                      "select": [
+                        [
+                          {
+                            "params": [
+                              "value"
+                            ],
+                            "type": "column"
+                          },
+                          {
+                            "params": [
+                              "last"
+                            ],
+                            "type": "aggregate"
+                          },
+                          {
+                            "params": [
+                              "increase"
+                            ],
+                            "type": "window"
+                          },
+                          {
+                            "params": [
+                              "value"
+                            ],
+                            "type": "alias"
+                          }
+                        ]
+                      ],
+                      "table": "collectd",
+                      "tags": [],
+                      "timeColumn": "tstamp",
+                      "timeColumnType": "timestamp",
+                      "where": [
+                        {
+                          "name": "$__timeFilter",
+                          "params": [],
+                          "type": "macro"
+                        },
+                        {
+                          "datatype": "varchar",
+                          "name": "",
+                          "params": [
+                            "host",
+                            "=",
+                            "'$host'"
+                          ],
+                          "type": "expression"
+                        },
+                        {
+                          "datatype": "varchar",
+                          "name": "",
+                          "params": [
+                            "plugin_inst",
+                            "=",
+                            "'$database'"
+                          ],
+                          "type": "expression"
+                        },
+                        {
+                          "datatype": "varchar",
+                          "name": "",
+                          "params": [
+                            "plugin",
+                            "=",
+                            "'postgresql'"
+                          ],
+                          "type": "expression"
+                        },
+                        {
+                          "datatype": "varchar",
+                          "name": "",
+                          "params": [
+                            "type",
+                            "=",
+                            "'pg_n_tup_c'"
+                          ],
+                          "type": "expression"
+                        },
+                        {
+                          "datatype": "varchar",
+                          "name": "",
+                          "params": [
+                            "type_inst",
+                            "=",
+                            "'ins'"
+                          ],
+                          "type": "expression"
+                        },
+                        {
+                          "datatype": "timestamptz",
+                          "name": "",
+                          "params": [
+                            "tstamp",
+                            ">",
+                            "$__timeFrom()"
+                          ],
+                          "type": "expression"
+                        },
+                        {
+                          "datatype": "timestamptz",
+                          "name": "",
+                          "params": [
+                            "tstamp",
+                            "<",
+                            "$__timeTo()"
+                          ],
+                          "type": "expression"
+                        }
+                      ]
+                    },
+                    "version": "v0"
+                  },
+                  "refId": "D"
+                }
+              },
+              {
+                "kind": "PanelQuery",
+                "spec": {
+                  "hidden": false,
+                  "query": {
+                    "datasource": {
+                      "name": "wayfarer-postgresql"
+                    },
+                    "group": "prometheus",
+                    "kind": "DataQuery",
+                    "spec": {
+                      "format": "time_series",
+                      "group": [
+                        {
+                          "params": [
+                            "type_inst"
+                          ],
+                          "type": "column"
+                        },
+                        {
+                          "params": [
+                            "tstamp"
+                          ],
+                          "type": "column"
+                        },
+                        {
+                          "params": [
+                            "type_inst"
+                          ],
+                          "type": "column"
+                        }
+                      ],
+                      "groupBy": [
+                        {
+                          "params": [
+                            "$__interval"
+                          ],
+                          "type": "time"
+                        },
+                        {
+                          "params": [
+                            "null"
+                          ],
+                          "type": "fill"
+                        }
+                      ],
+                      "metricColumn": "type_inst",
+                      "orderByTime": "ASC",
+                      "policy": "default",
+                      "rawQuery": false,
+                      "rawSql": "SELECT\n  tstamp AS \"time\",\n  type_inst AS metric,\n  (CASE WHEN last(value,tstamp) >= lag(last(value,tstamp)) OVER (PARTITION BY type_inst ORDER BY tstamp) THEN last(value,tstamp) - lag(last(value,tstamp)) OVER (PARTITION BY type_inst ORDER BY tstamp) WHEN lag(last(value,tstamp)) OVER (PARTITION BY type_inst ORDER BY tstamp) IS NULL THEN NULL ELSE last(value,tstamp) END) AS \"value\"\nFROM collectd\nWHERE\n  $__timeFilter(tstamp) AND\n  host = '$host' AND\n  plugin_inst = '$database' AND\n  plugin = 'postgresql' AND\n  type = 'pg_n_tup_c' AND\n  type_inst = 'upd' AND\n  tstamp > $__timeFrom() AND\n  tstamp < $__timeTo()\nGROUP BY type_inst, tstamp, type_inst,2\nORDER BY 1,2",
+                      "resultFormat": "time_series",
+                      "select": [
+                        [
+                          {
+                            "params": [
+                              "value"
+                            ],
+                            "type": "column"
+                          },
+                          {
+                            "params": [
+                              "last"
+                            ],
+                            "type": "aggregate"
+                          },
+                          {
+                            "params": [
+                              "increase"
+                            ],
+                            "type": "window"
+                          },
+                          {
+                            "params": [
+                              "value"
+                            ],
+                            "type": "alias"
+                          }
+                        ]
+                      ],
+                      "table": "collectd",
+                      "tags": [],
+                      "timeColumn": "tstamp",
+                      "timeColumnType": "timestamp",
+                      "where": [
+                        {
+                          "name": "$__timeFilter",
+                          "params": [],
+                          "type": "macro"
+                        },
+                        {
+                          "datatype": "varchar",
+                          "name": "",
+                          "params": [
+                            "host",
+                            "=",
+                            "'$host'"
+                          ],
+                          "type": "expression"
+                        },
+                        {
+                          "datatype": "varchar",
+                          "name": "",
+                          "params": [
+                            "plugin_inst",
+                            "=",
+                            "'$database'"
+                          ],
+                          "type": "expression"
+                        },
+                        {
+                          "datatype": "varchar",
+                          "name": "",
+                          "params": [
+                            "plugin",
+                            "=",
+                            "'postgresql'"
+                          ],
+                          "type": "expression"
+                        },
+                        {
+                          "datatype": "varchar",
+                          "name": "",
+                          "params": [
+                            "type",
+                            "=",
+                            "'pg_n_tup_c'"
+                          ],
+                          "type": "expression"
+                        },
+                        {
+                          "datatype": "varchar",
+                          "name": "",
+                          "params": [
+                            "type_inst",
+                            "=",
+                            "'upd'"
+                          ],
+                          "type": "expression"
+                        },
+                        {
+                          "datatype": "timestamptz",
+                          "name": "",
+                          "params": [
+                            "tstamp",
+                            ">",
+                            "$__timeFrom()"
+                          ],
+                          "type": "expression"
+                        },
+                        {
+                          "datatype": "timestamptz",
+                          "name": "",
+                          "params": [
+                            "tstamp",
+                            "<",
+                            "$__timeTo()"
+                          ],
+                          "type": "expression"
+                        }
+                      ]
+                    },
+                    "version": "v0"
+                  },
+                  "refId": "E"
+                }
+              },
+              {
+                "kind": "PanelQuery",
+                "spec": {
+                  "hidden": false,
+                  "query": {
+                    "datasource": {
+                      "name": "wayfarer-postgresql"
+                    },
+                    "group": "prometheus",
+                    "kind": "DataQuery",
+                    "spec": {
+                      "format": "time_series",
+                      "group": [
+                        {
+                          "params": [
+                            "type_inst"
+                          ],
+                          "type": "column"
+                        },
+                        {
+                          "params": [
+                            "tstamp"
+                          ],
+                          "type": "column"
+                        },
+                        {
+                          "params": [
+                            "type_inst"
+                          ],
+                          "type": "column"
+                        }
+                      ],
+                      "groupBy": [
+                        {
+                          "params": [
+                            "$__interval"
+                          ],
+                          "type": "time"
+                        },
+                        {
+                          "params": [
+                            "null"
+                          ],
+                          "type": "fill"
+                        }
+                      ],
+                      "metricColumn": "type_inst",
+                      "orderByTime": "ASC",
+                      "policy": "default",
+                      "rawQuery": false,
+                      "rawSql": "SELECT\n  tstamp AS \"time\",\n  type_inst AS metric,\n  (CASE WHEN last(value,tstamp) >= lag(last(value,tstamp)) OVER (PARTITION BY type_inst ORDER BY tstamp) THEN last(value,tstamp) - lag(last(value,tstamp)) OVER (PARTITION BY type_inst ORDER BY tstamp) WHEN lag(last(value,tstamp)) OVER (PARTITION BY type_inst ORDER BY tstamp) IS NULL THEN NULL ELSE last(value,tstamp) END) AS \"value\"\nFROM collectd\nWHERE\n  $__timeFilter(tstamp) AND\n  host = '$host' AND\n  plugin_inst = '$database' AND\n  plugin = 'postgresql' AND\n  type = 'pg_n_tup_c' AND\n  type_inst = 'del' AND\n  tstamp > $__timeFrom() AND\n  tstamp < $__timeTo()\nGROUP BY type_inst, tstamp, type_inst,2\nORDER BY 1,2",
+                      "resultFormat": "time_series",
+                      "select": [
+                        [
+                          {
+                            "params": [
+                              "value"
+                            ],
+                            "type": "column"
+                          },
+                          {
+                            "params": [
+                              "last"
+                            ],
+                            "type": "aggregate"
+                          },
+                          {
+                            "params": [
+                              "increase"
+                            ],
+                            "type": "window"
+                          },
+                          {
+                            "params": [
+                              "value"
+                            ],
+                            "type": "alias"
+                          }
+                        ]
+                      ],
+                      "table": "collectd",
+                      "tags": [],
+                      "timeColumn": "tstamp",
+                      "timeColumnType": "timestamp",
+                      "where": [
+                        {
+                          "name": "$__timeFilter",
+                          "params": [],
+                          "type": "macro"
+                        },
+                        {
+                          "datatype": "varchar",
+                          "name": "",
+                          "params": [
+                            "host",
+                            "=",
+                            "'$host'"
+                          ],
+                          "type": "expression"
+                        },
+                        {
+                          "datatype": "varchar",
+                          "name": "",
+                          "params": [
+                            "plugin_inst",
+                            "=",
+                            "'$database'"
+                          ],
+                          "type": "expression"
+                        },
+                        {
+                          "datatype": "varchar",
+                          "name": "",
+                          "params": [
+                            "plugin",
+                            "=",
+                            "'postgresql'"
+                          ],
+                          "type": "expression"
+                        },
+                        {
+                          "datatype": "varchar",
+                          "name": "",
+                          "params": [
+                            "type",
+                            "=",
+                            "'pg_n_tup_c'"
+                          ],
+                          "type": "expression"
+                        },
+                        {
+                          "datatype": "varchar",
+                          "name": "",
+                          "params": [
+                            "type_inst",
+                            "=",
+                            "'del'"
+                          ],
+                          "type": "expression"
+                        },
+                        {
+                          "datatype": "timestamptz",
+                          "name": "",
+                          "params": [
+                            "tstamp",
+                            ">",
+                            "$__timeFrom()"
+                          ],
+                          "type": "expression"
+                        },
+                        {
+                          "datatype": "timestamptz",
+                          "name": "",
+                          "params": [
+                            "tstamp",
+                            "<",
+                            "$__timeTo()"
+                          ],
+                          "type": "expression"
+                        }
+                      ]
+                    },
+                    "version": "v0"
+                  },
+                  "refId": "F"
+                }
+              }
+            ],
+            "queryOptions": {},
+            "transformations": []
+          }
+        },
+        "description": "",
+        "id": 17,
+        "links": [],
+        "title": "Row Activity",
+        "vizConfig": {
+          "group": "timeseries",
+          "kind": "VizConfig",
+          "spec": {
+            "fieldConfig": {
+              "defaults": {
+                "color": {
+                  "mode": "palette-classic"
+                },
+                "custom": {
+                  "axisBorderShow": false,
+                  "axisCenteredZero": false,
+                  "axisColorMode": "text",
+                  "axisLabel": "",
+                  "axisPlacement": "auto",
+                  "barAlignment": 0,
+                  "barWidthFactor": 0.6,
+                  "drawStyle": "line",
+                  "fillOpacity": 10,
+                  "gradientMode": "none",
+                  "hideFrom": {
+                    "legend": false,
+                    "tooltip": false,
+                    "viz": false
+                  },
+                  "insertNulls": false,
+                  "lineInterpolation": "linear",
+                  "lineWidth": 1,
+                  "pointSize": 5,
+                  "scaleDistribution": {
+                    "type": "linear"
+                  },
+                  "showPoints": "never",
+                  "showValues": false,
+                  "spanNulls": false,
+                  "stacking": {
+                    "group": "A",
+                    "mode": "none"
+                  },
+                  "thresholdsStyle": {
+                    "mode": "off"
+                  }
+                },
+                "decimals": -1,
+                "thresholds": {
+                  "mode": "absolute",
+                  "steps": [
+                    {
+                      "color": "green",
+                      "value": 0
+                    },
+                    {
+                      "color": "red",
+                      "value": 80
+                    }
+                  ]
+                },
+                "unit": "short"
+              },
+              "overrides": []
+            },
+            "options": {
+              "annotations": {
+                "clustering": -1,
+                "multiLane": false
+              },
+              "legend": {
+                "calcs": [
+                  "lastNotNull"
+                ],
+                "displayMode": "table",
+                "enableFacetedFilter": false,
+                "overflow": "ellipsis",
+                "placement": "right",
+                "showLegend": true
+              },
+              "tooltip": {
+                "hideZeros": false,
+                "mode": "multi",
+                "sort": "none"
+              }
+            }
+          },
+          "version": "13.1.0"
+        }
+      }
+    },
+    "panel-19": {
+      "kind": "Panel",
+      "spec": {
+        "data": {
+          "kind": "QueryGroup",
+          "spec": {
+            "queries": [
+              {
+                "kind": "PanelQuery",
+                "spec": {
+                  "hidden": false,
+                  "query": {
+                    "datasource": {
+                      "name": "wayfarer-postgresql"
+                    },
+                    "group": "prometheus",
+                    "kind": "DataQuery",
+                    "spec": {
+                      "format": "table",
+                      "group": [],
+                      "groupBy": [
+                        {
+                          "params": [
+                            "$__interval"
+                          ],
+                          "type": "time"
+                        },
+                        {
+                          "params": [
+                            "null"
+                          ],
+                          "type": "fill"
+                        }
+                      ],
+                      "metricColumn": "none",
+                      "orderByTime": "ASC",
+                      "policy": "default",
+                      "rawQuery": true,
+                      "rawSql": "SELECT\n  DISTINCT ON (type_inst)\n  type_inst as table, value\nFROM collectd\nWHERE\n  host = '$host' AND\n  plugin_inst = '$database' AND\n  plugin = 'postgresql' AND\n  type = 'table_sizes' AND\n  tstamp > $__timeFrom() AND\n  tstamp < $__timeTo()\nORDER BY 1,2 DESC",
+                      "resultFormat": "time_series",
+                      "select": [
+                        [
+                          {
+                            "params": [
+                              "value"
+                            ],
+                            "type": "field"
+                          },
+                          {
+                            "params": [],
+                            "type": "mean"
+                          }
+                        ]
+                      ],
+                      "tags": [],
+                      "timeColumn": "time",
+                      "where": [
+                        {
+                          "name": "$__timeFilter",
+                          "params": [],
+                          "type": "macro"
+                        }
+                      ]
+                    },
+                    "version": "v0"
+                  },
+                  "refId": "A"
+                }
+              }
+            ],
+            "queryOptions": {},
+            "transformations": [
+              {
+                "group": "merge",
+                "kind": "Transformation",
+                "spec": {
+                  "options": {
+                    "reducers": []
+                  }
+                }
+              }
+            ]
+          }
+        },
+        "description": "",
+        "id": 19,
+        "links": [],
+        "title": "Table Size",
+        "vizConfig": {
+          "group": "table",
+          "kind": "VizConfig",
+          "spec": {
+            "fieldConfig": {
+              "defaults": {
+                "custom": {
+                  "cellOptions": {
+                    "type": "auto"
+                  },
+                  "footer": {
+                    "reducers": []
+                  },
+                  "inspect": false
+                },
+                "decimals": 2,
+                "displayName": "",
+                "thresholds": {
+                  "mode": "absolute",
+                  "steps": [
+                    {
+                      "color": "green",
+                      "value": 0
+                    },
+                    {
+                      "color": "red",
+                      "value": 80
+                    }
+                  ]
+                },
+                "unit": "decbytes"
+              },
+              "overrides": [
+                {
+                  "matcher": {
+                    "id": "byName",
+                    "options": "Time"
+                  },
+                  "properties": [
+                    {
+                      "id": "displayName",
+                      "value": "Time"
+                    },
+                    {
+                      "id": "unit",
+                      "value": "time: YYYY-MM-DD HH:mm:ss"
+                    },
+                    {
+                      "id": "custom.align"
+                    }
+                  ]
+                }
+              ]
+            },
+            "options": {
+              "cellHeight": "sm",
+              "showHeader": true
+            }
+          },
+          "version": "13.1.0"
+        }
+      }
+    },
+    "panel-2": {
+      "kind": "Panel",
+      "spec": {
+        "data": {
+          "kind": "QueryGroup",
+          "spec": {
+            "queries": [
+              {
+                "kind": "PanelQuery",
+                "spec": {
+                  "hidden": true,
+                  "query": {
+                    "datasource": {
+                      "name": "wayfarer-postgresql"
+                    },
+                    "group": "prometheus",
+                    "kind": "DataQuery",
+                    "spec": {
+                      "format": "time_series",
+                      "group": [
+                        {
+                          "params": [
+                            "$__interval",
+                            "none"
+                          ],
+                          "type": "time"
+                        },
+                        {
+                          "params": [
+                            "type_inst"
+                          ],
+                          "type": "column"
+                        }
+                      ],
+                      "groupBy": [
+                        {
+                          "params": [
+                            "$__interval"
+                          ],
+                          "type": "time"
+                        },
+                        {
+                          "params": [
+                            "null"
+                          ],
+                          "type": "fill"
+                        }
+                      ],
+                      "metricColumn": "type_inst",
+                      "orderByTime": "ASC",
+                      "policy": "default",
+                      "rawQuery": false,
+                      "rawSql": "SELECT\n  $__timeGroupAlias(tstamp,$__interval),\n  type_inst AS metric,\n  last(value,tstamp) AS \"value\"\nFROM collectd\nWHERE\n  host = '$host' AND\n  plugin = 'cpu' AND\n  type = 'percent' AND\n  type_inst != 'idle'\nGROUP BY 1, type_inst,2\nORDER BY 1,2",
+                      "resultFormat": "time_series",
+                      "select": [
+                        [
+                          {
+                            "params": [
+                              "value"
+                            ],
+                            "type": "column"
+                          },
+                          {
+                            "params": [
+                              "last"
+                            ],
+                            "type": "aggregate"
+                          },
+                          {
+                            "params": [
+                              "value"
+                            ],
+                            "type": "alias"
+                          }
+                        ]
+                      ],
+                      "table": "collectd",
+                      "tags": [],
+                      "timeColumn": "tstamp",
+                      "timeColumnType": "timestamptz",
+                      "where": [
+                        {
+                          "datatype": "varchar",
+                          "name": "",
+                          "params": [
+                            "host",
+                            "=",
+                            "'$host'"
+                          ],
+                          "type": "expression"
+                        },
+                        {
+                          "datatype": "varchar",
+                          "name": "",
+                          "params": [
+                            "plugin",
+                            "=",
+                            "'cpu'"
+                          ],
+                          "type": "expression"
+                        },
+                        {
+                          "datatype": "varchar",
+                          "name": "",
+                          "params": [
+                            "type",
+                            "=",
+                            "'percent'"
+                          ],
+                          "type": "expression"
+                        },
+                        {
+                          "datatype": "varchar",
+                          "name": "",
+                          "params": [
+                            "type_inst",
+                            "!=",
+                            "'idle'"
+                          ],
+                          "type": "expression"
+                        }
+                      ]
+                    },
+                    "version": "v0"
+                  },
+                  "refId": "A"
+                }
+              },
+              {
+                "kind": "PanelQuery",
+                "spec": {
+                  "hidden": false,
+                  "query": {
+                    "datasource": {
+                      "name": "wayfarer-postgresql"
+                    },
+                    "group": "prometheus",
+                    "kind": "DataQuery",
+                    "spec": {
+                      "format": "time_series",
+                      "group": [
+                        {
+                          "params": [
+                            "$__interval",
+                            "none"
+                          ],
+                          "type": "time"
+                        },
+                        {
+                          "params": [
+                            "type_inst"
+                          ],
+                          "type": "column"
+                        }
+                      ],
+                      "groupBy": [
+                        {
+                          "params": [
+                            "$__interval"
+                          ],
+                          "type": "time"
+                        },
+                        {
+                          "params": [
+                            "null"
+                          ],
+                          "type": "fill"
+                        }
+                      ],
+                      "metricColumn": "type_inst",
+                      "orderByTime": "ASC",
+                      "policy": "default",
+                      "rawQuery": false,
+                      "rawSql": "SELECT\n  $__timeGroupAlias(tstamp,$__interval),\n  type_inst AS metric,\n  last(value,tstamp) AS \"value\"\nFROM collectd\nWHERE\n  host = '$host' AND\n  plugin = 'cpu' AND\n  type = 'percent' AND\n  type_inst != 'idle' AND\n  tstamp > $__timeFrom() AND\n  tstamp < $__timeTo()\nGROUP BY 1, type_inst,2\nORDER BY 1,2",
+                      "resultFormat": "time_series",
+                      "select": [
+                        [
+                          {
+                            "params": [
+                              "value"
+                            ],
+                            "type": "column"
+                          },
+                          {
+                            "params": [
+                              "last"
+                            ],
+                            "type": "aggregate"
+                          },
+                          {
+                            "params": [
+                              "value"
+                            ],
+                            "type": "alias"
+                          }
+                        ]
+                      ],
+                      "table": "collectd",
+                      "tags": [],
+                      "timeColumn": "tstamp",
+                      "timeColumnType": "timestamptz",
+                      "where": [
+                        {
+                          "datatype": "varchar",
+                          "name": "",
+                          "params": [
+                            "host",
+                            "=",
+                            "'$host'"
+                          ],
+                          "type": "expression"
+                        },
+                        {
+                          "datatype": "varchar",
+                          "name": "",
+                          "params": [
+                            "plugin",
+                            "=",
+                            "'cpu'"
+                          ],
+                          "type": "expression"
+                        },
+                        {
+                          "datatype": "varchar",
+                          "name": "",
+                          "params": [
+                            "type",
+                            "=",
+                            "'percent'"
+                          ],
+                          "type": "expression"
+                        },
+                        {
+                          "datatype": "varchar",
+                          "name": "",
+                          "params": [
+                            "type_inst",
+                            "!=",
+                            "'idle'"
+                          ],
+                          "type": "expression"
+                        },
+                        {
+                          "datatype": "timestamptz",
+                          "name": "",
+                          "params": [
+                            "tstamp",
+                            ">",
+                            "$__timeFrom()"
+                          ],
+                          "type": "expression"
+                        },
+                        {
+                          "datatype": "timestamptz",
+                          "name": "",
+                          "params": [
+                            "tstamp",
+                            "<",
+                            "$__timeTo()"
+                          ],
+                          "type": "expression"
+                        }
+                      ]
+                    },
+                    "version": "v0"
+                  },
+                  "refId": "B"
+                }
+              }
+            ],
+            "queryOptions": {},
+            "transformations": []
+          }
+        },
+        "description": "",
+        "id": 2,
+        "links": [],
+        "title": "CPU activity (%)",
+        "vizConfig": {
+          "group": "timeseries",
+          "kind": "VizConfig",
+          "spec": {
+            "fieldConfig": {
+              "defaults": {
+                "color": {
+                  "mode": "palette-classic"
+                },
+                "custom": {
+                  "axisBorderShow": false,
+                  "axisCenteredZero": false,
+                  "axisColorMode": "text",
+                  "axisLabel": "",
+                  "axisPlacement": "auto",
+                  "barAlignment": 0,
+                  "barWidthFactor": 0.6,
+                  "drawStyle": "line",
+                  "fillOpacity": 10,
+                  "gradientMode": "none",
+                  "hideFrom": {
+                    "legend": false,
+                    "tooltip": false,
+                    "viz": false
+                  },
+                  "insertNulls": false,
+                  "lineInterpolation": "linear",
+                  "lineWidth": 1,
+                  "pointSize": 5,
+                  "scaleDistribution": {
+                    "type": "linear"
+                  },
+                  "showPoints": "never",
+                  "showValues": false,
+                  "spanNulls": false,
+                  "stacking": {
+                    "group": "A",
+                    "mode": "none"
+                  },
+                  "thresholdsStyle": {
+                    "mode": "off"
+                  }
+                },
+                "thresholds": {
+                  "mode": "absolute",
+                  "steps": [
+                    {
+                      "color": "green",
+                      "value": 0
+                    },
+                    {
+                      "color": "red",
+                      "value": 80
+                    }
+                  ]
+                },
+                "unit": "percent"
+              },
+              "overrides": []
+            },
+            "options": {
+              "annotations": {
+                "clustering": -1,
+                "multiLane": false
+              },
+              "legend": {
+                "calcs": [
+                  "lastNotNull"
+                ],
+                "displayMode": "table",
+                "enableFacetedFilter": false,
+                "overflow": "ellipsis",
+                "placement": "right",
+                "showLegend": true
+              },
+              "tooltip": {
+                "hideZeros": false,
+                "mode": "multi",
+                "sort": "none"
+              }
+            }
+          },
+          "version": "13.1.0"
+        }
+      }
+    },
+    "panel-20": {
+      "kind": "Panel",
+      "spec": {
+        "data": {
+          "kind": "QueryGroup",
+          "spec": {
+            "queries": [
+              {
+                "kind": "PanelQuery",
+                "spec": {
+                  "hidden": false,
+                  "query": {
+                    "datasource": {
+                      "name": "wayfarer-postgresql"
+                    },
+                    "group": "prometheus",
+                    "kind": "DataQuery",
+                    "spec": {
+                      "format": "table",
+                      "group": [],
+                      "groupBy": [
+                        {
+                          "params": [
+                            "$__interval"
+                          ],
+                          "type": "time"
+                        },
+                        {
+                          "params": [
+                            "null"
+                          ],
+                          "type": "fill"
+                        }
+                      ],
+                      "metricColumn": "none",
+                      "orderByTime": "ASC",
+                      "policy": "default",
+                      "rawQuery": true,
+                      "rawSql": "SELECT\n  DISTINCT ON (type_inst)\n  type_inst as table, value\nFROM collectd\nWHERE\n  host = '$host' AND\n  plugin_inst = '$database' AND\n  plugin = 'postgresql' AND\n  name = '''indexes_size''' AND\n  tstamp > $__timeFrom() AND\n  tstamp < $__timeTo()\nGROUP BY 1,2\nORDER BY 1,2 DESC",
+                      "resultFormat": "time_series",
+                      "select": [
+                        [
+                          {
+                            "params": [
+                              "value"
+                            ],
+                            "type": "field"
+                          },
+                          {
+                            "params": [],
+                            "type": "mean"
+                          }
+                        ]
+                      ],
+                      "tags": [],
+                      "timeColumn": "time",
+                      "where": [
+                        {
+                          "name": "$__timeFilter",
+                          "params": [],
+                          "type": "macro"
+                        }
+                      ]
+                    },
+                    "version": "v0"
+                  },
+                  "refId": "A"
+                }
+              }
+            ],
+            "queryOptions": {},
+            "transformations": [
+              {
+                "group": "merge",
+                "kind": "Transformation",
+                "spec": {
+                  "options": {
+                    "reducers": []
+                  }
+                }
+              }
+            ]
+          }
+        },
+        "description": "",
+        "id": 20,
+        "links": [],
+        "title": "Index Size",
+        "vizConfig": {
+          "group": "table",
+          "kind": "VizConfig",
+          "spec": {
+            "fieldConfig": {
+              "defaults": {
+                "custom": {
+                  "cellOptions": {
+                    "type": "auto"
+                  },
+                  "footer": {
+                    "reducers": []
+                  },
+                  "inspect": false
+                },
+                "decimals": 2,
+                "displayName": "",
+                "thresholds": {
+                  "mode": "absolute",
+                  "steps": [
+                    {
+                      "color": "green",
+                      "value": 0
+                    },
+                    {
+                      "color": "red",
+                      "value": 80
+                    }
+                  ]
+                },
+                "unit": "decbytes"
+              },
+              "overrides": [
+                {
+                  "matcher": {
+                    "id": "byName",
+                    "options": "Time"
+                  },
+                  "properties": [
+                    {
+                      "id": "displayName",
+                      "value": "Time"
+                    },
+                    {
+                      "id": "unit",
+                      "value": "time: YYYY-MM-DD HH:mm:ss"
+                    },
+                    {
+                      "id": "custom.align"
+                    }
+                  ]
+                }
+              ]
+            },
+            "options": {
+              "cellHeight": "sm",
+              "showHeader": true
+            }
+          },
+          "version": "13.1.0"
+        }
+      }
+    },
+    "panel-21": {
+      "kind": "Panel",
+      "spec": {
+        "data": {
+          "kind": "QueryGroup",
+          "spec": {
+            "queries": [
+              {
+                "kind": "PanelQuery",
+                "spec": {
+                  "hidden": false,
+                  "query": {
+                    "datasource": {
+                      "name": "wayfarer-postgresql"
+                    },
+                    "group": "prometheus",
+                    "kind": "DataQuery",
+                    "spec": {
+                      "format": "table",
+                      "group": [],
+                      "groupBy": [
+                        {
+                          "params": [
+                            "$__interval"
+                          ],
+                          "type": "time"
+                        },
+                        {
+                          "params": [
+                            "null"
+                          ],
+                          "type": "fill"
+                        }
+                      ],
+                      "metricColumn": "none",
+                      "orderByTime": "ASC",
+                      "policy": "default",
+                      "rawQuery": true,
+                      "rawSql": "SELECT\n  DISTINCT ON (REPLACE('/' || plugin_inst,'-', '/'))\n REPLACE('/' || plugin_inst,'-', '/') as mountpoint, value\nFROM collectd\nWHERE\n  host = '$host' AND\n  plugin = 'df' AND\n  type = 'df_complex' AND \n  type_inst = 'used' AND\n  tstamp > $__timeFrom() AND\n  tstamp < $__timeTo()\nORDER BY 1,2 DESC",
+                      "resultFormat": "time_series",
+                      "select": [
+                        [
+                          {
+                            "params": [
+                              "value"
+                            ],
+                            "type": "field"
+                          },
+                          {
+                            "params": [],
+                            "type": "mean"
+                          }
+                        ]
+                      ],
+                      "tags": [],
+                      "timeColumn": "time",
+                      "where": [
+                        {
+                          "name": "$__timeFilter",
+                          "params": [],
+                          "type": "macro"
+                        }
+                      ]
+                    },
+                    "version": "v0"
+                  },
+                  "refId": "A"
+                }
+              }
+            ],
+            "queryOptions": {},
+            "transformations": [
+              {
+                "group": "merge",
+                "kind": "Transformation",
+                "spec": {
+                  "options": {
+                    "reducers": []
+                  }
+                }
+              }
+            ]
+          }
+        },
+        "description": "",
+        "id": 21,
+        "links": [],
+        "title": "Disk Space: Used",
+        "vizConfig": {
+          "group": "table",
+          "kind": "VizConfig",
+          "spec": {
+            "fieldConfig": {
+              "defaults": {
+                "custom": {
+                  "cellOptions": {
+                    "type": "auto"
+                  },
+                  "footer": {
+                    "reducers": []
+                  },
+                  "inspect": false
+                },
+                "decimals": 2,
+                "displayName": "",
+                "thresholds": {
+                  "mode": "absolute",
+                  "steps": [
+                    {
+                      "color": "green",
+                      "value": 0
+                    },
+                    {
+                      "color": "red",
+                      "value": 80
+                    }
+                  ]
+                },
+                "unit": "decbytes"
+              },
+              "overrides": [
+                {
+                  "matcher": {
+                    "id": "byName",
+                    "options": "Time"
+                  },
+                  "properties": [
+                    {
+                      "id": "displayName",
+                      "value": "Time"
+                    },
+                    {
+                      "id": "unit",
+                      "value": "time: YYYY-MM-DD HH:mm:ss"
+                    },
+                    {
+                      "id": "custom.align"
+                    }
+                  ]
+                }
+              ]
+            },
+            "options": {
+              "cellHeight": "sm",
+              "showHeader": true
+            }
+          },
+          "version": "13.1.0"
+        }
+      }
+    },
+    "panel-22": {
+      "kind": "Panel",
+      "spec": {
+        "data": {
+          "kind": "QueryGroup",
+          "spec": {
+            "queries": [
+              {
+                "kind": "PanelQuery",
+                "spec": {
+                  "hidden": true,
+                  "query": {
+                    "datasource": {
+                      "name": "wayfarer-postgresql"
+                    },
+                    "group": "prometheus",
+                    "kind": "DataQuery",
+                    "spec": {
+                      "format": "table",
+                      "group": [],
+                      "groupBy": [
+                        {
+                          "params": [
+                            "$__interval"
+                          ],
+                          "type": "time"
+                        },
+                        {
+                          "params": [
+                            "null"
+                          ],
+                          "type": "fill"
+                        }
+                      ],
+                      "metricColumn": "none",
+                      "orderByTime": "ASC",
+                      "policy": "default",
+                      "rawQuery": true,
+                      "rawSql": "SELECT\n  DISTINCT ON (REPLACE('/' || plugin_inst,'-', '/'))\n REPLACE('/' || plugin_inst,'-', '/') as mountpoint, value\nFROM collectd\nWHERE\n  host = '$host' AND\n  plugin = 'df' AND\n  type = 'percent_bytes' AND \n  type_inst = 'used' AND \n  tstamp > $__timeFrom() AND\n  tstamp < $__timeTo()\nORDER BY 1,2 DESC",
+                      "resultFormat": "time_series",
+                      "select": [
+                        [
+                          {
+                            "params": [
+                              "value"
+                            ],
+                            "type": "field"
+                          },
+                          {
+                            "params": [],
+                            "type": "mean"
+                          }
+                        ]
+                      ],
+                      "tags": [],
+                      "timeColumn": "time",
+                      "where": [
+                        {
+                          "name": "$__timeFilter",
+                          "params": [],
+                          "type": "macro"
+                        }
+                      ]
+                    },
+                    "version": "v0"
+                  },
+                  "refId": "A"
+                }
+              },
+              {
+                "kind": "PanelQuery",
+                "spec": {
+                  "hidden": false,
+                  "query": {
+                    "datasource": {
+                      "name": "wayfarer-postgresql"
+                    },
+                    "group": "prometheus",
+                    "kind": "DataQuery",
+                    "spec": {
+                      "format": "time_series",
+                      "group": [],
+                      "metricColumn": "none",
+                      "rawQuery": true,
+                      "rawSql": "SELECT\n  $__timeGroupAlias(tstamp,24h),\n  REPLACE('/' || plugin_inst,'-', '/') AS metric,\n  (CASE WHEN avg(value) >= lag(avg(value)) OVER (PARTITION BY REPLACE('/' || plugin_inst,'-', '/') ORDER BY $__timeGroup(tstamp,24h)) THEN avg(value) - lag(avg(value)) OVER (PARTITION BY REPLACE('/' || plugin_inst,'-', '/') ORDER BY $__timeGroup(tstamp,24h)) WHEN lag(avg(value)) OVER (PARTITION BY REPLACE('/' || plugin_inst,'-', '/') ORDER BY $__timeGroup(tstamp,24h)) IS NULL THEN NULL ELSE avg(value) END) AS \"value\"\nFROM collectd\nWHERE\n  $__timeFilter(tstamp) AND\n  tstamp > $__timeFrom() AND\n  tstamp < $__timeTo() AND\n  host = '$host' AND\n  plugin = 'df' AND\n  type = 'df_complex' AND\n  type_inst = 'used' AND\n  value IS NOT NULL\nGROUP BY 1, REPLACE('/' || plugin_inst,'-', '/'),2\nORDER BY 1,2",
+                      "select": [
+                        [
+                          {
+                            "params": [
+                              "value"
+                            ],
+                            "type": "column"
+                          }
+                        ]
+                      ],
+                      "timeColumn": "time",
+                      "where": [
+                        {
+                          "name": "$__timeFilter",
+                          "params": [],
+                          "type": "macro"
+                        }
+                      ]
+                    },
+                    "version": "v0"
+                  },
+                  "refId": "B"
+                }
+              }
+            ],
+            "queryOptions": {
+              "timeFrom": "24h"
+            },
+            "transformations": [
+              {
+                "group": "reduce",
+                "kind": "Transformation",
+                "spec": {
+                  "options": {
+                    "includeTimeField": false,
+                    "reducers": [
+                      "lastNotNull"
+                    ]
+                  }
+                }
+              }
+            ]
+          }
+        },
+        "description": "",
+        "id": 22,
+        "links": [],
+        "title": "Disk Space: % Change over 24h",
+        "vizConfig": {
+          "group": "table",
+          "kind": "VizConfig",
+          "spec": {
+            "fieldConfig": {
+              "defaults": {
+                "custom": {
+                  "cellOptions": {
+                    "type": "auto"
+                  },
+                  "footer": {
+                    "reducers": []
+                  },
+                  "inspect": false
+                },
+                "decimals": 2,
+                "displayName": "",
+                "thresholds": {
+                  "mode": "absolute",
+                  "steps": [
+                    {
+                      "color": "green",
+                      "value": 0
+                    },
+                    {
+                      "color": "red",
+                      "value": 80
+                    }
+                  ]
+                },
+                "unit": "decbytes"
+              },
+              "overrides": [
+                {
+                  "matcher": {
+                    "id": "byName",
+                    "options": "Time"
+                  },
+                  "properties": [
+                    {
+                      "id": "displayName",
+                      "value": "Time"
+                    },
+                    {
+                      "id": "unit",
+                      "value": "time: YYYY-MM-DD HH:mm:ss"
+                    },
+                    {
+                      "id": "custom.align"
+                    }
+                  ]
+                }
+              ]
+            },
+            "options": {
+              "cellHeight": "sm",
+              "showHeader": true
+            }
+          },
+          "version": "13.1.0"
+        }
+      }
+    },
+    "panel-23": {
+      "kind": "Panel",
+      "spec": {
+        "data": {
+          "kind": "QueryGroup",
+          "spec": {
+            "queries": [
+              {
+                "kind": "PanelQuery",
+                "spec": {
+                  "hidden": false,
+                  "query": {
+                    "datasource": {
+                      "name": "wayfarer-postgresql"
+                    },
+                    "group": "prometheus",
+                    "kind": "DataQuery",
+                    "spec": {
+                      "format": "table",
+                      "group": [],
+                      "groupBy": [
+                        {
+                          "params": [
+                            "$__interval"
+                          ],
+                          "type": "time"
+                        },
+                        {
+                          "params": [
+                            "null"
+                          ],
+                          "type": "fill"
+                        }
+                      ],
+                      "metricColumn": "none",
+                      "orderByTime": "ASC",
+                      "policy": "default",
+                      "rawQuery": true,
+                      "rawSql": "SELECT\n  DISTINCT ON (REPLACE('/' || plugin_inst,'-', '/'))\n REPLACE('/' || plugin_inst,'-', '/') as mountpoint, value\nFROM collectd\nWHERE\n  host = '$host' AND\n  plugin = 'df' AND\n  type = 'df_complex' AND \n  type_inst = 'free' AND\n  tstamp > $__timeFrom() AND\n  tstamp < $__timeTo()\nORDER BY 1,2 DESC",
+                      "resultFormat": "time_series",
+                      "select": [
+                        [
+                          {
+                            "params": [
+                              "value"
+                            ],
+                            "type": "field"
+                          },
+                          {
+                            "params": [],
+                            "type": "mean"
+                          }
+                        ]
+                      ],
+                      "tags": [],
+                      "timeColumn": "time",
+                      "where": [
+                        {
+                          "name": "$__timeFilter",
+                          "params": [],
+                          "type": "macro"
+                        }
+                      ]
+                    },
+                    "version": "v0"
+                  },
+                  "refId": "A"
+                }
+              }
+            ],
+            "queryOptions": {},
+            "transformations": [
+              {
+                "group": "merge",
+                "kind": "Transformation",
+                "spec": {
+                  "options": {
+                    "reducers": []
+                  }
+                }
+              }
+            ]
+          }
+        },
+        "description": "",
+        "id": 23,
+        "links": [],
+        "title": "Disk Space: Free",
+        "vizConfig": {
+          "group": "table",
+          "kind": "VizConfig",
+          "spec": {
+            "fieldConfig": {
+              "defaults": {
+                "custom": {
+                  "cellOptions": {
+                    "type": "auto"
+                  },
+                  "footer": {
+                    "reducers": []
+                  },
+                  "inspect": false
+                },
+                "decimals": 2,
+                "displayName": "",
+                "thresholds": {
+                  "mode": "absolute",
+                  "steps": [
+                    {
+                      "color": "green",
+                      "value": 0
+                    },
+                    {
+                      "color": "red",
+                      "value": 80
+                    }
+                  ]
+                },
+                "unit": "decbytes"
+              },
+              "overrides": [
+                {
+                  "matcher": {
+                    "id": "byName",
+                    "options": "Time"
+                  },
+                  "properties": [
+                    {
+                      "id": "displayName",
+                      "value": "Time"
+                    },
+                    {
+                      "id": "unit",
+                      "value": "time: YYYY-MM-DD HH:mm:ss"
+                    },
+                    {
+                      "id": "custom.align"
+                    }
+                  ]
+                }
+              ]
+            },
+            "options": {
+              "cellHeight": "sm",
+              "showHeader": true
+            }
+          },
+          "version": "13.1.0"
+        }
+      }
+    },
+    "panel-24": {
+      "kind": "Panel",
+      "spec": {
+        "data": {
+          "kind": "QueryGroup",
+          "spec": {
+            "queries": [
+              {
+                "kind": "PanelQuery",
+                "spec": {
+                  "hidden": false,
+                  "query": {
+                    "datasource": {
+                      "name": "wayfarer-postgresql"
+                    },
+                    "group": "prometheus",
+                    "kind": "DataQuery",
+                    "spec": {
+                      "format": "table",
+                      "group": [],
+                      "groupBy": [
+                        {
+                          "params": [
+                            "$__interval"
+                          ],
+                          "type": "time"
+                        },
+                        {
+                          "params": [
+                            "null"
+                          ],
+                          "type": "fill"
+                        }
+                      ],
+                      "metricColumn": "none",
+                      "orderByTime": "ASC",
+                      "policy": "default",
+                      "rawQuery": true,
+                      "rawSql": "SELECT\n  DISTINCT ON (REPLACE('/' || plugin_inst,'-', '/'))\n REPLACE('/' || plugin_inst,'-', '/') as mountpoint, value\nFROM collectd\nWHERE\n  host = '$host' AND\n  plugin = 'df' AND\n  type = 'percent_bytes' AND \n  type_inst = 'used' AND\n  tstamp > $__timeFrom() AND\n  tstamp < $__timeTo()\nORDER BY 1,2 DESC",
+                      "resultFormat": "time_series",
+                      "select": [
+                        [
+                          {
+                            "params": [
+                              "value"
+                            ],
+                            "type": "field"
+                          },
+                          {
+                            "params": [],
+                            "type": "mean"
+                          }
+                        ]
+                      ],
+                      "tags": [],
+                      "timeColumn": "time",
+                      "where": [
+                        {
+                          "name": "$__timeFilter",
+                          "params": [],
+                          "type": "macro"
+                        }
+                      ]
+                    },
+                    "version": "v0"
+                  },
+                  "refId": "A"
+                }
+              }
+            ],
+            "queryOptions": {},
+            "transformations": [
+              {
+                "group": "merge",
+                "kind": "Transformation",
+                "spec": {
+                  "options": {
+                    "reducers": []
+                  }
+                }
+              }
+            ]
+          }
+        },
+        "description": "",
+        "id": 24,
+        "links": [],
+        "title": "Disk Space: Used %",
+        "vizConfig": {
+          "group": "table",
+          "kind": "VizConfig",
+          "spec": {
+            "fieldConfig": {
+              "defaults": {
+                "custom": {
+                  "cellOptions": {
+                    "type": "auto"
+                  },
+                  "footer": {
+                    "reducers": []
+                  },
+                  "inspect": false
+                },
+                "decimals": 2,
+                "displayName": "",
+                "thresholds": {
+                  "mode": "absolute",
+                  "steps": [
+                    {
+                      "color": "green",
+                      "value": 0
+                    },
+                    {
+                      "color": "red",
+                      "value": 80
+                    }
+                  ]
+                },
+                "unit": "percent"
+              },
+              "overrides": [
+                {
+                  "matcher": {
+                    "id": "byName",
+                    "options": "Time"
+                  },
+                  "properties": [
+                    {
+                      "id": "displayName",
+                      "value": "Time"
+                    },
+                    {
+                      "id": "unit",
+                      "value": "time: YYYY-MM-DD HH:mm:ss"
+                    },
+                    {
+                      "id": "custom.align"
+                    }
+                  ]
+                }
+              ]
+            },
+            "options": {
+              "cellHeight": "sm",
+              "showHeader": true
+            }
+          },
+          "version": "13.1.0"
+        }
+      }
+    },
+    "panel-3": {
+      "kind": "Panel",
+      "spec": {
+        "data": {
+          "kind": "QueryGroup",
+          "spec": {
+            "queries": [
+              {
+                "kind": "PanelQuery",
+                "spec": {
+                  "hidden": false,
+                  "query": {
+                    "datasource": {
+                      "name": "wayfarer-postgresql"
+                    },
+                    "group": "prometheus",
+                    "kind": "DataQuery",
+                    "spec": {
+                      "format": "time_series",
+                      "group": [
+                        {
+                          "params": [
+                            "$__interval",
+                            "none"
+                          ],
+                          "type": "time"
+                        }
+                      ],
+                      "groupBy": [
+                        {
+                          "params": [
+                            "$__interval"
+                          ],
+                          "type": "time"
+                        },
+                        {
+                          "params": [
+                            "null"
+                          ],
+                          "type": "fill"
+                        }
+                      ],
+                      "metricColumn": "name",
+                      "orderByTime": "ASC",
+                      "policy": "default",
+                      "rawQuery": false,
+                      "rawSql": "SELECT\n  $__timeGroupAlias(tstamp,$__interval),\n  name AS metric,\n  last(value,tstamp) AS \"value\"\nFROM collectd\nWHERE\n  host = '$host' AND\n  plugin = 'load' AND\n  value = value AND\n  tstamp > $__timeFrom() AND\n  tstamp < $__timeTo()\nGROUP BY 1,2\nORDER BY 1,2",
+                      "resultFormat": "time_series",
+                      "select": [
+                        [
+                          {
+                            "params": [
+                              "value"
+                            ],
+                            "type": "column"
+                          },
+                          {
+                            "params": [
+                              "last"
+                            ],
+                            "type": "aggregate"
+                          },
+                          {
+                            "params": [
+                              "value"
+                            ],
+                            "type": "alias"
+                          }
+                        ]
+                      ],
+                      "table": "collectd",
+                      "tags": [],
+                      "timeColumn": "tstamp",
+                      "timeColumnType": "timestamptz",
+                      "where": [
+                        {
+                          "datatype": "varchar",
+                          "name": "",
+                          "params": [
+                            "host",
+                            "=",
+                            "'$host'"
+                          ],
+                          "type": "expression"
+                        },
+                        {
+                          "datatype": "varchar",
+                          "name": "",
+                          "params": [
+                            "plugin",
+                            "=",
+                            "'load'"
+                          ],
+                          "type": "expression"
+                        },
+                        {
+                          "name": "",
+                          "params": [
+                            "value",
+                            "=",
+                            "value"
+                          ],
+                          "type": "expression"
+                        },
+                        {
+                          "datatype": "timestamptz",
+                          "name": "",
+                          "params": [
+                            "tstamp",
+                            ">",
+                            "$__timeFrom()"
+                          ],
+                          "type": "expression"
+                        },
+                        {
+                          "datatype": "timestamptz",
+                          "name": "",
+                          "params": [
+                            "tstamp",
+                            "<",
+                            "$__timeTo()"
+                          ],
+                          "type": "expression"
+                        }
+                      ]
+                    },
+                    "version": "v0"
+                  },
+                  "refId": "A"
+                }
+              }
+            ],
+            "queryOptions": {},
+            "transformations": []
+          }
+        },
+        "description": "",
+        "id": 3,
+        "links": [],
+        "title": "System Load",
+        "vizConfig": {
+          "group": "timeseries",
+          "kind": "VizConfig",
+          "spec": {
+            "fieldConfig": {
+              "defaults": {
+                "color": {
+                  "mode": "palette-classic"
+                },
+                "custom": {
+                  "axisBorderShow": false,
+                  "axisCenteredZero": false,
+                  "axisColorMode": "text",
+                  "axisLabel": "",
+                  "axisPlacement": "auto",
+                  "barAlignment": 0,
+                  "barWidthFactor": 0.6,
+                  "drawStyle": "line",
+                  "fillOpacity": 10,
+                  "gradientMode": "none",
+                  "hideFrom": {
+                    "legend": false,
+                    "tooltip": false,
+                    "viz": false
+                  },
+                  "insertNulls": false,
+                  "lineInterpolation": "linear",
+                  "lineWidth": 1,
+                  "pointSize": 5,
+                  "scaleDistribution": {
+                    "type": "linear"
+                  },
+                  "showPoints": "never",
+                  "showValues": false,
+                  "spanNulls": false,
+                  "stacking": {
+                    "group": "A",
+                    "mode": "none"
+                  },
+                  "thresholdsStyle": {
+                    "mode": "off"
+                  }
+                },
+                "decimals": 2,
+                "thresholds": {
+                  "mode": "absolute",
+                  "steps": [
+                    {
+                      "color": "green",
+                      "value": 0
+                    },
+                    {
+                      "color": "red",
+                      "value": 80
+                    }
+                  ]
+                },
+                "unit": "short"
+              },
+              "overrides": []
+            },
+            "options": {
+              "annotations": {
+                "clustering": -1,
+                "multiLane": false
+              },
+              "legend": {
+                "calcs": [
+                  "lastNotNull"
+                ],
+                "displayMode": "table",
+                "enableFacetedFilter": false,
+                "overflow": "ellipsis",
+                "placement": "right",
+                "showLegend": true
+              },
+              "tooltip": {
+                "hideZeros": false,
+                "mode": "multi",
+                "sort": "none"
+              }
+            }
+          },
+          "version": "13.1.0"
+        }
+      }
+    },
+    "panel-4": {
+      "kind": "Panel",
+      "spec": {
+        "data": {
+          "kind": "QueryGroup",
+          "spec": {
+            "queries": [
+              {
+                "kind": "PanelQuery",
+                "spec": {
+                  "hidden": false,
+                  "query": {
+                    "datasource": {
+                      "name": "wayfarer-postgresql"
+                    },
+                    "group": "prometheus",
+                    "kind": "DataQuery",
+                    "spec": {
+                      "format": "time_series",
+                      "group": [
+                        {
+                          "params": [
+                            "$__interval",
+                            "none"
+                          ],
+                          "type": "time"
+                        },
+                        {
+                          "params": [
+                            "plugin_inst"
+                          ],
+                          "type": "column"
+                        },
+                        {
+                          "params": [
+                            "type"
+                          ],
+                          "type": "column"
+                        }
+                      ],
+                      "groupBy": [
+                        {
+                          "params": [
+                            "$__interval"
+                          ],
+                          "type": "time"
+                        },
+                        {
+                          "params": [
+                            "null"
+                          ],
+                          "type": "fill"
+                        }
+                      ],
+                      "metricColumn": "'TX: ' || plugin_inst ",
+                      "orderByTime": "ASC",
+                      "policy": "default",
+                      "rawQuery": false,
+                      "rawSql": "SELECT\n  $__timeGroupAlias(tstamp,$__interval),\n  'TX: ' || plugin_inst  AS metric,\n  (CASE WHEN avg(value) >= lag(avg(value)) OVER (PARTITION BY 'TX: ' || plugin_inst  ORDER BY $__timeGroup(tstamp,$__interval)) THEN avg(value) - lag(avg(value)) OVER (PARTITION BY 'TX: ' || plugin_inst  ORDER BY $__timeGroup(tstamp,$__interval)) WHEN lag(avg(value)) OVER (PARTITION BY 'TX: ' || plugin_inst  ORDER BY $__timeGroup(tstamp,$__interval)) IS NULL THEN NULL ELSE avg(value) END)/extract(epoch from min(tstamp) - lag(min(tstamp)) OVER (PARTITION BY 'TX: ' || plugin_inst  ORDER BY $__timeGroup(tstamp,$__interval))) AS \"value\"\nFROM collectd\nWHERE\n  host = '$host' AND\n  plugin = 'interface' AND\n  type = 'if_octets' AND\n  name = '''tx''' AND\n  tstamp > $__timeFrom() AND\n  tstamp < $__timeTo()\nGROUP BY 1, plugin_inst, type,2\nORDER BY 1,2",
+                      "resultFormat": "time_series",
+                      "select": [
+                        [
+                          {
+                            "params": [
+                              "value"
+                            ],
+                            "type": "column"
+                          },
+                          {
+                            "params": [
+                              "avg"
+                            ],
+                            "type": "aggregate"
+                          },
+                          {
+                            "params": [
+                              "rate"
+                            ],
+                            "type": "window"
+                          },
+                          {
+                            "params": [
+                              "value"
+                            ],
+                            "type": "alias"
+                          }
+                        ]
+                      ],
+                      "table": "collectd",
+                      "tags": [],
+                      "timeColumn": "tstamp",
+                      "timeColumnType": "timestamptz",
+                      "where": [
+                        {
+                          "datatype": "varchar",
+                          "name": "",
+                          "params": [
+                            "host",
+                            "=",
+                            "'$host'"
+                          ],
+                          "type": "expression"
+                        },
+                        {
+                          "datatype": "varchar",
+                          "name": "",
+                          "params": [
+                            "plugin",
+                            "=",
+                            "'interface'"
+                          ],
+                          "type": "expression"
+                        },
+                        {
+                          "datatype": "varchar",
+                          "name": "",
+                          "params": [
+                            "type",
+                            "=",
+                            "'if_octets'"
+                          ],
+                          "type": "expression"
+                        },
+                        {
+                          "datatype": "varchar",
+                          "name": "",
+                          "params": [
+                            "name",
+                            "=",
+                            "'''tx'''"
+                          ],
+                          "type": "expression"
+                        },
+                        {
+                          "datatype": "timestamptz",
+                          "name": "",
+                          "params": [
+                            "tstamp",
+                            ">",
+                            "$__timeFrom()"
+                          ],
+                          "type": "expression"
+                        },
+                        {
+                          "datatype": "timestamptz",
+                          "name": "",
+                          "params": [
+                            "tstamp",
+                            "<",
+                            "$__timeTo()"
+                          ],
+                          "type": "expression"
+                        }
+                      ]
+                    },
+                    "version": "v0"
+                  },
+                  "refId": "A"
+                }
+              },
+              {
+                "kind": "PanelQuery",
+                "spec": {
+                  "hidden": false,
+                  "query": {
+                    "datasource": {
+                      "name": "wayfarer-postgresql"
+                    },
+                    "group": "prometheus",
+                    "kind": "DataQuery",
+                    "spec": {
+                      "format": "time_series",
+                      "group": [
+                        {
+                          "params": [
+                            "$__interval",
+                            "none"
+                          ],
+                          "type": "time"
+                        },
+                        {
+                          "params": [
+                            "plugin_inst"
+                          ],
+                          "type": "column"
+                        },
+                        {
+                          "params": [
+                            "type"
+                          ],
+                          "type": "column"
+                        }
+                      ],
+                      "groupBy": [
+                        {
+                          "params": [
+                            "$__interval"
+                          ],
+                          "type": "time"
+                        },
+                        {
+                          "params": [
+                            "null"
+                          ],
+                          "type": "fill"
+                        }
+                      ],
+                      "metricColumn": "'RX: ' || plugin_inst ",
+                      "orderByTime": "ASC",
+                      "policy": "default",
+                      "rawQuery": false,
+                      "rawSql": "SELECT\n  $__timeGroupAlias(tstamp,$__interval),\n  'RX: ' || plugin_inst  AS metric,\n  (CASE WHEN avg(value) >= lag(avg(value)) OVER (PARTITION BY 'RX: ' || plugin_inst  ORDER BY $__timeGroup(tstamp,$__interval)) THEN avg(value) - lag(avg(value)) OVER (PARTITION BY 'RX: ' || plugin_inst  ORDER BY $__timeGroup(tstamp,$__interval)) WHEN lag(avg(value)) OVER (PARTITION BY 'RX: ' || plugin_inst  ORDER BY $__timeGroup(tstamp,$__interval)) IS NULL THEN NULL ELSE avg(value) END)/extract(epoch from min(tstamp) - lag(min(tstamp)) OVER (PARTITION BY 'RX: ' || plugin_inst  ORDER BY $__timeGroup(tstamp,$__interval))) AS \"value\"\nFROM collectd\nWHERE\n  $__timeFilter(tstamp) AND\n  host = '$host' AND\n  plugin = 'interface' AND\n  type = 'if_octets' AND\n  tstamp > $__timeFrom() AND\n  tstamp < $__timeTo() AND\n  tstamp < $__timeTo()\nGROUP BY 1, plugin_inst, type,2\nORDER BY 1,2",
+                      "resultFormat": "time_series",
+                      "select": [
+                        [
+                          {
+                            "params": [
+                              "value"
+                            ],
+                            "type": "column"
+                          },
+                          {
+                            "params": [
+                              "avg"
+                            ],
+                            "type": "aggregate"
+                          },
+                          {
+                            "params": [
+                              "rate"
+                            ],
+                            "type": "window"
+                          },
+                          {
+                            "params": [
+                              "value"
+                            ],
+                            "type": "alias"
+                          }
+                        ]
+                      ],
+                      "table": "collectd",
+                      "tags": [],
+                      "timeColumn": "tstamp",
+                      "timeColumnType": "timestamptz",
+                      "where": [
+                        {
+                          "name": "$__timeFilter",
+                          "params": [],
+                          "type": "macro"
+                        },
+                        {
+                          "datatype": "varchar",
+                          "name": "",
+                          "params": [
+                            "host",
+                            "=",
+                            "'$host'"
+                          ],
+                          "type": "expression"
+                        },
+                        {
+                          "datatype": "varchar",
+                          "name": "",
+                          "params": [
+                            "plugin",
+                            "=",
+                            "'interface'"
+                          ],
+                          "type": "expression"
+                        },
+                        {
+                          "datatype": "varchar",
+                          "name": "",
+                          "params": [
+                            "type",
+                            "=",
+                            "'if_octets'"
+                          ],
+                          "type": "expression"
+                        },
+                        {
+                          "datatype": "timestamptz",
+                          "name": "",
+                          "params": [
+                            "tstamp",
+                            ">",
+                            "$__timeFrom()"
+                          ],
+                          "type": "expression"
+                        },
+                        {
+                          "datatype": "timestamptz",
+                          "name": "",
+                          "params": [
+                            "tstamp",
+                            "<",
+                            "$__timeTo()"
+                          ],
+                          "type": "expression"
+                        },
+                        {
+                          "datatype": "timestamptz",
+                          "name": "",
+                          "params": [
+                            "tstamp",
+                            "<",
+                            "$__timeTo()"
+                          ],
+                          "type": "expression"
+                        }
+                      ]
+                    },
+                    "version": "v0"
+                  },
+                  "refId": "B"
+                }
+              }
+            ],
+            "queryOptions": {},
+            "transformations": []
+          }
+        },
+        "description": "",
+        "id": 4,
+        "links": [],
+        "title": "Network Activity",
+        "vizConfig": {
+          "group": "timeseries",
+          "kind": "VizConfig",
+          "spec": {
+            "fieldConfig": {
+              "defaults": {
+                "color": {
+                  "mode": "palette-classic"
+                },
+                "custom": {
+                  "axisBorderShow": false,
+                  "axisCenteredZero": false,
+                  "axisColorMode": "text",
+                  "axisLabel": "",
+                  "axisPlacement": "auto",
+                  "barAlignment": 0,
+                  "barWidthFactor": 0.6,
+                  "drawStyle": "line",
+                  "fillOpacity": 10,
+                  "gradientMode": "none",
+                  "hideFrom": {
+                    "legend": false,
+                    "tooltip": false,
+                    "viz": false
+                  },
+                  "insertNulls": false,
+                  "lineInterpolation": "linear",
+                  "lineWidth": 1,
+                  "pointSize": 5,
+                  "scaleDistribution": {
+                    "type": "linear"
+                  },
+                  "showPoints": "never",
+                  "showValues": false,
+                  "spanNulls": false,
+                  "stacking": {
+                    "group": "A",
+                    "mode": "none"
+                  },
+                  "thresholdsStyle": {
+                    "mode": "off"
+                  }
+                },
+                "decimals": 0,
+                "thresholds": {
+                  "mode": "absolute",
+                  "steps": [
+                    {
+                      "color": "green",
+                      "value": 0
+                    },
+                    {
+                      "color": "red",
+                      "value": 80
+                    }
+                  ]
+                },
+                "unit": "Bps"
+              },
+              "overrides": []
+            },
+            "options": {
+              "annotations": {
+                "clustering": -1,
+                "multiLane": false
+              },
+              "legend": {
+                "calcs": [
+                  "lastNotNull"
+                ],
+                "displayMode": "table",
+                "enableFacetedFilter": false,
+                "overflow": "ellipsis",
+                "placement": "right",
+                "showLegend": true
+              },
+              "tooltip": {
+                "hideZeros": false,
+                "mode": "multi",
+                "sort": "none"
+              }
+            }
+          },
+          "version": "13.1.0"
+        }
+      }
+    },
+    "panel-5": {
+      "kind": "Panel",
+      "spec": {
+        "data": {
+          "kind": "QueryGroup",
+          "spec": {
+            "queries": [
+              {
+                "kind": "PanelQuery",
+                "spec": {
+                  "hidden": false,
+                  "query": {
+                    "datasource": {
+                      "name": "wayfarer-postgresql"
+                    },
+                    "group": "prometheus",
+                    "kind": "DataQuery",
+                    "spec": {
+                      "format": "time_series",
+                      "group": [
+                        {
+                          "params": [
+                            "$__interval",
+                            "none"
+                          ],
+                          "type": "time"
+                        },
+                        {
+                          "params": [
+                            "plugin_inst"
+                          ],
+                          "type": "column"
+                        },
+                        {
+                          "params": [
+                            "type"
+                          ],
+                          "type": "column"
+                        }
+                      ],
+                      "groupBy": [
+                        {
+                          "params": [
+                            "$__interval"
+                          ],
+                          "type": "time"
+                        },
+                        {
+                          "params": [
+                            "null"
+                          ],
+                          "type": "fill"
+                        }
+                      ],
+                      "metricColumn": "'read - ' || plugin_inst ",
+                      "orderByTime": "ASC",
+                      "policy": "default",
+                      "rawQuery": true,
+                      "rawSql": "SELECT\n  $__timeGroupAlias(tstamp,$__interval),\n  'read - ' || plugin_inst  AS metric,\n  (CASE WHEN last(value,tstamp) >= lag(last(value,tstamp)) OVER (PARTITION BY 'read - ' || plugin_inst  ORDER BY $__timeGroup(tstamp,$__interval)) THEN last(value,tstamp) - lag(last(value,tstamp)) OVER (PARTITION BY 'read - ' || plugin_inst  ORDER BY $__timeGroup(tstamp,$__interval)) WHEN lag(last(value,tstamp)) OVER (PARTITION BY 'read - ' || plugin_inst  ORDER BY $__timeGroup(tstamp,$__interval)) IS NULL THEN NULL ELSE last(value,tstamp) END) / 60 AS \"value\"\nFROM collectd\nWHERE\n  host = '$host' AND\n  plugin = 'disk' AND\n  type = 'disk_octets' AND\n  name = '''read''' AND\n  tstamp > $__timeFrom() AND\n  tstamp < $__timeTo()\nGROUP BY 1, plugin_inst, type,2\nORDER BY 1,2",
+                      "resultFormat": "time_series",
+                      "select": [
+                        [
+                          {
+                            "params": [
+                              "value"
+                            ],
+                            "type": "column"
+                          },
+                          {
+                            "params": [
+                              "last"
+                            ],
+                            "type": "aggregate"
+                          },
+                          {
+                            "params": [
+                              "increase"
+                            ],
+                            "type": "window"
+                          },
+                          {
+                            "params": [
+                              "value"
+                            ],
+                            "type": "alias"
+                          }
+                        ]
+                      ],
+                      "table": "collectd",
+                      "tags": [],
+                      "timeColumn": "tstamp",
+                      "timeColumnType": "timestamptz",
+                      "where": [
+                        {
+                          "datatype": "varchar",
+                          "name": "",
+                          "params": [
+                            "host",
+                            "=",
+                            "'$host'"
+                          ],
+                          "type": "expression"
+                        },
+                        {
+                          "datatype": "varchar",
+                          "name": "",
+                          "params": [
+                            "plugin",
+                            "=",
+                            "'disk'"
+                          ],
+                          "type": "expression"
+                        },
+                        {
+                          "datatype": "varchar",
+                          "name": "",
+                          "params": [
+                            "type",
+                            "=",
+                            "'disk_octets'"
+                          ],
+                          "type": "expression"
+                        },
+                        {
+                          "datatype": "varchar",
+                          "name": "",
+                          "params": [
+                            "name",
+                            "=",
+                            "'''read'''"
+                          ],
+                          "type": "expression"
+                        }
+                      ]
+                    },
+                    "version": "v0"
+                  },
+                  "refId": "A"
+                }
+              },
+              {
+                "kind": "PanelQuery",
+                "spec": {
+                  "hidden": false,
+                  "query": {
+                    "datasource": {
+                      "name": "wayfarer-postgresql"
+                    },
+                    "group": "prometheus",
+                    "kind": "DataQuery",
+                    "spec": {
+                      "format": "time_series",
+                      "group": [
+                        {
+                          "params": [
+                            "$__interval",
+                            "none"
+                          ],
+                          "type": "time"
+                        },
+                        {
+                          "params": [
+                            "plugin_inst"
+                          ],
+                          "type": "column"
+                        },
+                        {
+                          "params": [
+                            "type"
+                          ],
+                          "type": "column"
+                        }
+                      ],
+                      "groupBy": [
+                        {
+                          "params": [
+                            "$__interval"
+                          ],
+                          "type": "time"
+                        },
+                        {
+                          "params": [
+                            "null"
+                          ],
+                          "type": "fill"
+                        }
+                      ],
+                      "metricColumn": "'write - ' || plugin_inst ",
+                      "orderByTime": "ASC",
+                      "policy": "default",
+                      "rawQuery": true,
+                      "rawSql": "SELECT\n  $__timeGroupAlias(tstamp,$__interval),\n  'write - ' || plugin_inst  AS metric,\n  (CASE WHEN last(value,tstamp) >= lag(last(value,tstamp)) OVER (PARTITION BY 'write - ' || plugin_inst  ORDER BY $__timeGroup(tstamp,$__interval)) THEN last(value,tstamp) - lag(last(value,tstamp)) OVER (PARTITION BY 'write - ' || plugin_inst  ORDER BY $__timeGroup(tstamp,$__interval)) WHEN lag(last(value,tstamp)) OVER (PARTITION BY 'write - ' || plugin_inst  ORDER BY $__timeGroup(tstamp,$__interval)) IS NULL THEN NULL ELSE last(value,tstamp) END) / 60 AS \"value\"\nFROM collectd\nWHERE\n  host = '$host' AND\n  plugin = 'disk' AND\n  type = 'disk_octets' AND\n  name = '''write''' AND\n  tstamp > $__timeFrom() AND\n  tstamp < $__timeTo()\nGROUP BY 1, plugin_inst, type,2\nORDER BY 1,2",
+                      "resultFormat": "time_series",
+                      "select": [
+                        [
+                          {
+                            "params": [
+                              "value"
+                            ],
+                            "type": "column"
+                          },
+                          {
+                            "params": [
+                              "last"
+                            ],
+                            "type": "aggregate"
+                          },
+                          {
+                            "params": [
+                              "increase"
+                            ],
+                            "type": "window"
+                          },
+                          {
+                            "params": [
+                              "value"
+                            ],
+                            "type": "alias"
+                          }
+                        ]
+                      ],
+                      "table": "collectd",
+                      "tags": [],
+                      "timeColumn": "tstamp",
+                      "timeColumnType": "timestamptz",
+                      "where": [
+                        {
+                          "datatype": "varchar",
+                          "name": "",
+                          "params": [
+                            "host",
+                            "=",
+                            "'$host'"
+                          ],
+                          "type": "expression"
+                        },
+                        {
+                          "datatype": "varchar",
+                          "name": "",
+                          "params": [
+                            "plugin",
+                            "=",
+                            "'disk'"
+                          ],
+                          "type": "expression"
+                        },
+                        {
+                          "datatype": "varchar",
+                          "name": "",
+                          "params": [
+                            "type",
+                            "=",
+                            "'disk_octets'"
+                          ],
+                          "type": "expression"
+                        },
+                        {
+                          "datatype": "varchar",
+                          "name": "",
+                          "params": [
+                            "name",
+                            "=",
+                            "'''write'''"
+                          ],
+                          "type": "expression"
+                        }
+                      ]
+                    },
+                    "version": "v0"
+                  },
+                  "refId": "B"
+                }
+              }
+            ],
+            "queryOptions": {},
+            "transformations": []
+          }
+        },
+        "description": "",
+        "id": 5,
+        "links": [],
+        "title": "Disk I/O",
+        "vizConfig": {
+          "group": "timeseries",
+          "kind": "VizConfig",
+          "spec": {
+            "fieldConfig": {
+              "defaults": {
+                "color": {
+                  "mode": "palette-classic"
+                },
+                "custom": {
+                  "axisBorderShow": false,
+                  "axisCenteredZero": false,
+                  "axisColorMode": "text",
+                  "axisLabel": "",
+                  "axisPlacement": "auto",
+                  "barAlignment": 0,
+                  "barWidthFactor": 0.6,
+                  "drawStyle": "line",
+                  "fillOpacity": 10,
+                  "gradientMode": "none",
+                  "hideFrom": {
+                    "legend": false,
+                    "tooltip": false,
+                    "viz": false
+                  },
+                  "insertNulls": false,
+                  "lineInterpolation": "linear",
+                  "lineWidth": 1,
+                  "pointSize": 5,
+                  "scaleDistribution": {
+                    "type": "linear"
+                  },
+                  "showPoints": "never",
+                  "showValues": false,
+                  "spanNulls": false,
+                  "stacking": {
+                    "group": "A",
+                    "mode": "none"
+                  },
+                  "thresholdsStyle": {
+                    "mode": "off"
+                  }
+                },
+                "decimals": 0,
+                "thresholds": {
+                  "mode": "absolute",
+                  "steps": [
+                    {
+                      "color": "green",
+                      "value": 0
+                    },
+                    {
+                      "color": "red",
+                      "value": 80
+                    }
+                  ]
+                },
+                "unit": "Bps"
+              },
+              "overrides": []
+            },
+            "options": {
+              "annotations": {
+                "clustering": -1,
+                "multiLane": false
+              },
+              "legend": {
+                "calcs": [
+                  "lastNotNull"
+                ],
+                "displayMode": "table",
+                "enableFacetedFilter": false,
+                "overflow": "ellipsis",
+                "placement": "right",
+                "showLegend": true
+              },
+              "tooltip": {
+                "hideZeros": false,
+                "mode": "multi",
+                "sort": "none"
+              }
+            }
+          },
+          "version": "13.1.0"
+        }
+      }
+    },
+    "panel-6": {
+      "kind": "Panel",
+      "spec": {
+        "data": {
+          "kind": "QueryGroup",
+          "spec": {
+            "queries": [
+              {
+                "kind": "PanelQuery",
+                "spec": {
+                  "hidden": false,
+                  "query": {
+                    "datasource": {
+                      "name": "wayfarer-postgresql"
+                    },
+                    "group": "prometheus",
+                    "kind": "DataQuery",
+                    "spec": {
+                      "format": "time_series",
+                      "group": [
+                        {
+                          "params": [
+                            "$__interval",
+                            "none"
+                          ],
+                          "type": "time"
+                        },
+                        {
+                          "params": [
+                            "plugin_inst"
+                          ],
+                          "type": "column"
+                        },
+                        {
+                          "params": [
+                            "type"
+                          ],
+                          "type": "column"
+                        }
+                      ],
+                      "groupBy": [
+                        {
+                          "params": [
+                            "$__interval"
+                          ],
+                          "type": "time"
+                        },
+                        {
+                          "params": [
+                            "null"
+                          ],
+                          "type": "fill"
+                        }
+                      ],
+                      "metricColumn": "type_inst",
+                      "orderByTime": "ASC",
+                      "policy": "default",
+                      "rawQuery": false,
+                      "rawSql": "SELECT\n  $__timeGroupAlias(tstamp,$__interval),\n  type_inst AS metric,\n  last(value,tstamp) AS \"value\"\nFROM collectd\nWHERE\n  host = '$host' AND\n  plugin = 'memory' AND\n  type = 'memory' AND\n  tstamp > $__timeFrom() AND\n  tstamp < $__timeTo()\nGROUP BY 1, plugin_inst, type,2\nORDER BY 1,2",
+                      "resultFormat": "time_series",
+                      "select": [
+                        [
+                          {
+                            "params": [
+                              "value"
+                            ],
+                            "type": "column"
+                          },
+                          {
+                            "params": [
+                              "last"
+                            ],
+                            "type": "aggregate"
+                          },
+                          {
+                            "params": [
+                              "value"
+                            ],
+                            "type": "alias"
+                          }
+                        ]
+                      ],
+                      "table": "collectd",
+                      "tags": [],
+                      "timeColumn": "tstamp",
+                      "timeColumnType": "timestamptz",
+                      "where": [
+                        {
+                          "datatype": "varchar",
+                          "name": "",
+                          "params": [
+                            "host",
+                            "=",
+                            "'$host'"
+                          ],
+                          "type": "expression"
+                        },
+                        {
+                          "datatype": "varchar",
+                          "name": "",
+                          "params": [
+                            "plugin",
+                            "=",
+                            "'memory'"
+                          ],
+                          "type": "expression"
+                        },
+                        {
+                          "datatype": "varchar",
+                          "name": "",
+                          "params": [
+                            "type",
+                            "=",
+                            "'memory'"
+                          ],
+                          "type": "expression"
+                        },
+                        {
+                          "datatype": "timestamptz",
+                          "name": "",
+                          "params": [
+                            "tstamp",
+                            ">",
+                            "$__timeFrom()"
+                          ],
+                          "type": "expression"
+                        },
+                        {
+                          "datatype": "timestamptz",
+                          "name": "",
+                          "params": [
+                            "tstamp",
+                            "<",
+                            "$__timeTo()"
+                          ],
+                          "type": "expression"
+                        }
+                      ]
+                    },
+                    "version": "v0"
+                  },
+                  "refId": "A"
+                }
+              }
+            ],
+            "queryOptions": {},
+            "transformations": []
+          }
+        },
+        "description": "",
+        "id": 6,
+        "links": [],
+        "title": "Memory Utilization",
+        "vizConfig": {
+          "group": "timeseries",
+          "kind": "VizConfig",
+          "spec": {
+            "fieldConfig": {
+              "defaults": {
+                "color": {
+                  "mode": "palette-classic"
+                },
+                "custom": {
+                  "axisBorderShow": false,
+                  "axisCenteredZero": false,
+                  "axisColorMode": "text",
+                  "axisLabel": "",
+                  "axisPlacement": "auto",
+                  "barAlignment": 0,
+                  "barWidthFactor": 0.6,
+                  "drawStyle": "line",
+                  "fillOpacity": 10,
+                  "gradientMode": "none",
+                  "hideFrom": {
+                    "legend": false,
+                    "tooltip": false,
+                    "viz": false
+                  },
+                  "insertNulls": false,
+                  "lineInterpolation": "linear",
+                  "lineWidth": 1,
+                  "pointSize": 5,
+                  "scaleDistribution": {
+                    "type": "linear"
+                  },
+                  "showPoints": "never",
+                  "showValues": false,
+                  "spanNulls": false,
+                  "stacking": {
+                    "group": "A",
+                    "mode": "normal"
+                  },
+                  "thresholdsStyle": {
+                    "mode": "off"
+                  }
+                },
+                "decimals": 0,
+                "thresholds": {
+                  "mode": "absolute",
+                  "steps": [
+                    {
+                      "color": "green",
+                      "value": 0
+                    },
+                    {
+                      "color": "red",
+                      "value": 80
+                    }
+                  ]
+                },
+                "unit": "decbytes"
+              },
+              "overrides": []
+            },
+            "options": {
+              "annotations": {
+                "clustering": -1,
+                "multiLane": false
+              },
+              "legend": {
+                "calcs": [
+                  "lastNotNull"
+                ],
+                "displayMode": "table",
+                "enableFacetedFilter": false,
+                "overflow": "ellipsis",
+                "placement": "right",
+                "showLegend": true
+              },
+              "tooltip": {
+                "hideZeros": false,
+                "mode": "multi",
+                "sort": "none"
+              }
+            }
+          },
+          "version": "13.1.0"
+        }
+      }
+    }
+  },
+  "layout": {
+    "kind": "RowsLayout",
+    "spec": {
+      "rows": [
+        {
+          "kind": "RowsLayoutRow",
+          "spec": {
+            "collapse": false,
+            "layout": {
+              "kind": "GridLayout",
+              "spec": {
+                "items": [
+                  {
+                    "kind": "GridLayoutItem",
+                    "spec": {
+                      "element": {
+                        "kind": "ElementReference",
+                        "name": "panel-2"
+                      },
+                      "height": 9,
+                      "width": 12,
+                      "x": 0,
+                      "y": 0
+                    }
+                  },
+                  {
+                    "kind": "GridLayoutItem",
+                    "spec": {
+                      "element": {
+                        "kind": "ElementReference",
+                        "name": "panel-3"
+                      },
+                      "height": 9,
+                      "width": 12,
+                      "x": 12,
+                      "y": 0
+                    }
+                  },
+                  {
+                    "kind": "GridLayoutItem",
+                    "spec": {
+                      "element": {
+                        "kind": "ElementReference",
+                        "name": "panel-4"
+                      },
+                      "height": 9,
+                      "width": 12,
+                      "x": 0,
+                      "y": 9
+                    }
+                  },
+                  {
+                    "kind": "GridLayoutItem",
+                    "spec": {
+                      "element": {
+                        "kind": "ElementReference",
+                        "name": "panel-5"
+                      },
+                      "height": 9,
+                      "width": 12,
+                      "x": 12,
+                      "y": 9
+                    }
+                  },
+                  {
+                    "kind": "GridLayoutItem",
+                    "spec": {
+                      "element": {
+                        "kind": "ElementReference",
+                        "name": "panel-21"
+                      },
+                      "height": 6,
+                      "width": 6,
+                      "x": 0,
+                      "y": 18
+                    }
+                  },
+                  {
+                    "kind": "GridLayoutItem",
+                    "spec": {
+                      "element": {
+                        "kind": "ElementReference",
+                        "name": "panel-24"
+                      },
+                      "height": 6,
+                      "width": 6,
+                      "x": 6,
+                      "y": 18
+                    }
+                  },
+                  {
+                    "kind": "GridLayoutItem",
+                    "spec": {
+                      "element": {
+                        "kind": "ElementReference",
+                        "name": "panel-23"
+                      },
+                      "height": 6,
+                      "width": 6,
+                      "x": 12,
+                      "y": 18
+                    }
+                  },
+                  {
+                    "kind": "GridLayoutItem",
+                    "spec": {
+                      "element": {
+                        "kind": "ElementReference",
+                        "name": "panel-22"
+                      },
+                      "height": 6,
+                      "width": 6,
+                      "x": 18,
+                      "y": 18
+                    }
+                  },
+                  {
+                    "kind": "GridLayoutItem",
+                    "spec": {
+                      "element": {
+                        "kind": "ElementReference",
+                        "name": "panel-6"
+                      },
+                      "height": 6,
+                      "width": 24,
+                      "x": 0,
+                      "y": 24
+                    }
+                  }
+                ]
+              }
+            },
+            "title": "System Stats"
+          }
+        },
+        {
+          "kind": "RowsLayoutRow",
+          "spec": {
+            "collapse": false,
+            "layout": {
+              "kind": "GridLayout",
+              "spec": {
+                "items": [
+                  {
+                    "kind": "GridLayoutItem",
+                    "spec": {
+                      "element": {
+                        "kind": "ElementReference",
+                        "name": "panel-12"
+                      },
+                      "height": 9,
+                      "width": 12,
+                      "x": 0,
+                      "y": 0
+                    }
+                  },
+                  {
+                    "kind": "GridLayoutItem",
+                    "spec": {
+                      "element": {
+                        "kind": "ElementReference",
+                        "name": "panel-13"
+                      },
+                      "height": 9,
+                      "width": 12,
+                      "x": 12,
+                      "y": 0
+                    }
+                  },
+                  {
+                    "kind": "GridLayoutItem",
+                    "spec": {
+                      "element": {
+                        "kind": "ElementReference",
+                        "name": "panel-15"
+                      },
+                      "height": 6,
+                      "width": 5,
+                      "x": 0,
+                      "y": 9
+                    }
+                  },
+                  {
+                    "kind": "GridLayoutItem",
+                    "spec": {
+                      "element": {
+                        "kind": "ElementReference",
+                        "name": "panel-16"
+                      },
+                      "height": 6,
+                      "width": 5,
+                      "x": 5,
+                      "y": 9
+                    }
+                  },
+                  {
+                    "kind": "GridLayoutItem",
+                    "spec": {
+                      "element": {
+                        "kind": "ElementReference",
+                        "name": "panel-19"
+                      },
+                      "height": 6,
+                      "width": 7,
+                      "x": 10,
+                      "y": 9
+                    }
+                  },
+                  {
+                    "kind": "GridLayoutItem",
+                    "spec": {
+                      "element": {
+                        "kind": "ElementReference",
+                        "name": "panel-20"
+                      },
+                      "height": 6,
+                      "width": 7,
+                      "x": 17,
+                      "y": 9
+                    }
+                  },
+                  {
+                    "kind": "GridLayoutItem",
+                    "spec": {
+                      "element": {
+                        "kind": "ElementReference",
+                        "name": "panel-17"
+                      },
+                      "height": 9,
+                      "width": 24,
+                      "x": 0,
+                      "y": 15
+                    }
+                  }
+                ]
+              }
+            },
+            "title": "PostgreSQL Stats"
+          }
+        }
+      ]
+    }
+  },
+  "links": [],
+  "liveNow": false,
+  "preload": false,
+  "tags": [],
+  "timeSettings": {
+    "autoRefresh": "",
+    "autoRefreshIntervals": [
+      "5s",
+      "10s",
+      "30s",
+      "1m",
+      "5m",
+      "15m",
+      "30m",
+      "1h",
+      "2h",
+      "1d"
+    ],
+    "fiscalYearStartMonth": 0,
+    "from": "now-3h",
+    "hideTimepicker": false,
+    "timezone": "browser",
+    "to": "now"
+  },
+  "title": "PostgreSQL Infrastructure",
+  "variables": [
+    {
+      "kind": "QueryVariable",
+      "spec": {
+        "allowCustomValue": true,
+        "current": {
+          "text": "",
+          "value": ""
+        },
+        "definition": "",
+        "hide": "dontHide",
+        "includeAll": false,
+        "multi": false,
+        "name": "host",
+        "options": [],
+        "query": {
+          "datasource": {
+            "name": "wayfarer-postgresql"
+          },
+          "group": "prometheus",
+          "kind": "DataQuery",
+          "spec": {
+            "__legacyStringValue": "SELECT DISTINCT ON (host) host as host from identifiers;"
+          },
+          "version": "v0"
+        },
+        "refresh": "onDashboardLoad",
+        "regex": "",
+        "regexApplyTo": "value",
+        "skipUrlSync": false,
+        "sort": "disabled"
+      }
+    },
+    {
+      "kind": "QueryVariable",
+      "spec": {
+        "allowCustomValue": true,
+        "current": {
+          "text": "",
+          "value": ""
+        },
+        "definition": "",
+        "hide": "dontHide",
+        "includeAll": false,
+        "multi": false,
+        "name": "database",
+        "options": [],
+        "query": {
+          "datasource": {
+            "name": "wayfarer-postgresql"
+          },
+          "group": "prometheus",
+          "kind": "DataQuery",
+          "spec": {
+            "__legacyStringValue": "SELECT DISTINCT ON (plugin_inst) plugin_inst as plugin_inst from identifiers where plugin = 'postgresql' and host = '$host';"
+          },
+          "version": "v0"
+        },
+        "refresh": "onDashboardLoad",
+        "regex": "",
+        "regexApplyTo": "value",
+        "skipUrlSync": false,
+        "sort": "disabled"
+      }
+    }
+  ]
+}
