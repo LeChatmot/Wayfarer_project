@@ -62,7 +62,7 @@ services:
     networks:
       - e2e-frontend-network
     healthcheck:
-      test: [ "CMD-SHELL", "wget -q --spider http://localhost:80/ || exit 1" ]
+      test: [ "CMD-SHELL", "wget -q --spider http://localhost:8090/ || exit 1" ]
       interval: 5s
       timeout: 5s
       retries: 30
