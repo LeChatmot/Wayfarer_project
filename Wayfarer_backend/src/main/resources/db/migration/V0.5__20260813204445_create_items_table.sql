@@ -1,6 +1,6 @@
 CREATE TABLE IF NOT EXISTS items(
-    id BIGSERIAL PRIMARY KEY,
-    item_list_id BIGSERIAL NOT NULL,
+    id SERIAL PRIMARY KEY,
+    item_list_id SERIAL NOT NULL,
     name VARCHAR(60) NOT NULL,
     quantity INTEGER,
     CONSTRAINT fk_item_list
