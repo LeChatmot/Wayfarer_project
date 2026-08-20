@@ -222,14 +222,14 @@ pipeline {
             steps {
                 script {
                     sh """
-                        docker compose -f ${E2E_COMPOSE} -p ${E2E_PROJECT} down -v --remove-orphans || true
+                        docker-compose -f ${E2E_COMPOSE} -p ${E2E_PROJECT} down -v --remove-orphans || true
                         docker system prune -f --filter "until=24h" || true
                     """
 
                     try {
                         sh """
-                            docker compose -f ${E2E_COMPOSE} -p ${E2E_PROJECT} build --pull
-                            docker compose -f ${E2E_COMPOSE} -p ${E2E_PROJECT} up -d --wait --wait-timeout 240
+                            docker-compose -f ${E2E_COMPOSE} -p ${E2E_PROJECT} build --pull
+                            docker-compose -f ${E2E_COMPOSE} -p ${E2E_PROJECT} up -d --wait --wait-timeout 240
                         """
 
                         sh """
@@ -251,8 +251,8 @@ pipeline {
                         }
                     } finally {
                         sh """
-                            docker compose -f ${E2E_COMPOSE} -p ${E2E_PROJECT} logs --no-color > e2e-stack.log 2>&1 || true
-                            docker compose -f ${E2E_COMPOSE} -p ${E2E_PROJECT} down -v --remove-orphans || true
+                            docker-compose -f ${E2E_COMPOSE} -p ${E2E_PROJECT} logs --no-color > e2e-stack.log 2>&1 || true
+                            docker-compose -f ${E2E_COMPOSE} -p ${E2E_PROJECT} down -v --remove-orphans || true
                         """
                     }
                 }
@@ -299,12 +299,14 @@ pipeline {
             }
             steps {
                 script {
+                    sh 'docker-compose rm'
+
                     sh 'chmod +x scripts/generate-grafana-env.sh'
                     sh './scripts/generate-grafana-env.sh'
 
                     sh """
-                        docker compose -f ${PROD_COMPOSE} build --pull
-                        docker compose -f ${PROD_COMPOSE} up -d --remove-orphans --wait --wait-timeout 300
+                        docker-compose -f ${PROD_COMPOSE} build --pull
+                        docker-compose -f ${PROD_COMPOSE} up -d --remove-orphans --wait --wait-timeout 300
                     """
                 }
             }
@@ -314,8 +316,8 @@ pipeline {
                 }
                 failure {
                     echo "Echec du deploiement - verification de l'etat de la stack"
-                    sh "docker compose -f ${PROD_COMPOSE} ps || true"
-                    sh "docker compose -f ${PROD_COMPOSE} logs --tail=200 --no-color || true"
+                    sh "docker-compose -f ${PROD_COMPOSE} ps || true"
+                    sh "docker-compose -f ${PROD_COMPOSE} logs --tail=200 --no-color || true"
                 }
             }
         }
