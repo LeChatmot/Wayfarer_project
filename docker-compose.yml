@@ -39,8 +39,6 @@ services:
       POSTGRES_PORT: 5432
       POSTGRES_DB: wayfarer
       LOGGING_CONFIG: /config/logback-spring.xml
-    volumes:
-      - ./Wayfarer_backend/src/main/resources/logback-spring.xml:/config/logback-spring.xml:ro
     ports:
       - "8080"
     networks:

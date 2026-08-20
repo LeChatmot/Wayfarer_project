@@ -7,6 +7,7 @@ COPY mvnw pom.xml ./
 RUN ./mvnw dependency:go-offline -B
 
 COPY src ./src
+COPY src/main/resources/logback-spring.xml /config/logback-spring.xml
 
 ARG BUILD_TIMESTAMP=default
 RUN echo "Building at ${BUILD_TIMESTAMP}" && ./mvnw clean package -DskipTests -B
@@ -20,6 +21,7 @@ RUN addgroup -S spring && adduser -S spring -G spring
 WORKDIR /app
 
 COPY --from=build /app/target/*.jar app.jar
+COPY --from=build /config/logback-spring.xml /config/logback-spring.xml
 COPY entrypoint.sh ./entrypoint.sh
 
 RUN chmod +x ./entrypoint.sh && chown -R spring:spring /app
