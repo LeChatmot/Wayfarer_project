@@ -47,6 +47,7 @@ pipeline {
             steps {
                 sh 'chmod +x scripts/generate-secrets.sh'
                 sh './scripts/generate-secrets.sh'
+                sh 'chmod 644 secrets/*.txt'
             }
         }
 
