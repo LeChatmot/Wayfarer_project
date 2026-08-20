@@ -26,6 +26,8 @@ services:
       - postgres_user
       - postgres_password
       - jwt_secret
+      - prometheus_user
+      - prometheus_password
     depends_on:
       postgres:
         condition: service_healthy
@@ -60,7 +62,7 @@ services:
     networks:
       - e2e-frontend-network
     healthcheck:
-      test: [ "CMD-SHELL", "wget -q --spider http://localhost:80/ || exit 1" ]
+      test: [ "CMD-SHELL", "curl http://localhost:80/ || exit 1" ]
       interval: 5s
       timeout: 5s
       retries: 30
@@ -70,6 +72,10 @@ secrets:
     file: ./secrets/postgres_user.txt
   postgres_password:
     file: ./secrets/postgres_password.txt
+  prometheus_user:
+    file: ./secrets/prometheus_user.txt
+  prometheus_password:
+    file: ./secrets/prometheus_password.txt
   jwt_secret:
     file: ./secrets/jwt_secret.txt
 

@@ -1,17 +1,18 @@
-import { Injectable, signal } from '@angular/core';
+import { Injectable, signal, inject } from '@angular/core';
 import { HttpClient } from '@angular/common/http';
 import { Observable, tap } from 'rxjs';
 import { environment } from '../../../environments/environment';
 import { AuthResponse, LoginRequest, RegisterRequest } from '../models/auth.model';
+import { LOCAL_STORAGE } from '../tokens/local-storage.token';
 
 @Injectable({ providedIn: 'root' })
 export class AuthService {
   private readonly apiUrl = `${environment.apiUrl}/auth`;
   private readonly tokenKey = 'wayfarer_token';
+  private readonly http = inject(HttpClient);
+  private readonly storage = inject(LOCAL_STORAGE);
 
   readonly isAuthenticated = signal(this.hasToken());
-
-  constructor(private http: HttpClient) {}
 
   register(request: RegisterRequest): Observable<AuthResponse> {
     return this.http.post<AuthResponse>(`${this.apiUrl}/register`, request).pipe(
@@ -26,20 +27,20 @@ export class AuthService {
   }
 
   logout(): void {
-    localStorage.removeItem(this.tokenKey);
+    this.storage.removeItem(this.tokenKey);
     this.isAuthenticated.set(false);
   }
 
   getToken(): string | null {
-    return localStorage.getItem(this.tokenKey);
+    return this.storage.getItem(this.tokenKey);
   }
 
   private storeToken(token: string): void {
-    localStorage.setItem(this.tokenKey, token);
+    this.storage.setItem(this.tokenKey, token);
     this.isAuthenticated.set(true);
   }
 
   private hasToken(): boolean {
-    return !!localStorage.getItem(this.tokenKey);
+    return !!this.storage.getItem(this.tokenKey);
   }
 }

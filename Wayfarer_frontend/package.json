@@ -7,7 +7,7 @@
     "build": "ng build",
     "watch": "ng build --watch --configuration development",
     "test": "ng test",
-    "test:ci": "ng test --watch=false --coverage --coverage-reporters=lcov,text-summary,html --reporters=default,junit --output-file=reports/junit-vitest.xml",
+    "test:ci": "ng test --watch=false --coverage --coverage-reporters=lcov --coverage-reporters=text-summary --coverage-reporters=html --reporters=default --reporters=junit --output-file=reports/junit-vitest.xml",
     "e2e": "playwright test"
   },
   "prettier": {
@@ -41,26 +41,33 @@
     "leaflet.heightgraph": "^1.4.0",
     "rxjs": "~7.8.0",
     "tslib": "^2.3.0",
+    "vite-plugin-angular": "^0.0.0",
     "yarn": "^1.22.22"
   },
   "devDependencies": {
+    "@analogjs/vite-plugin-angular": "^2.7.0",
+    "@analogjs/vitest-angular": "^2.7.0",
     "@angular/build": "^21.1.2",
     "@angular/cli": "^21.0.4",
     "@angular/compiler-cli": "^21.1.0",
     "@playwright/test": "^1.61.0",
     "@tailwindcss/postcss": "^4.3.3",
     "@types/express": "^5.0.1",
+    "@types/jest": "^30.0.0",
+    "@types/jsdom": "^30.0.0",
     "@types/leaflet": "^1.9.22",
+    "@types/mocha": "^10.0.10",
     "@types/node": "^20.17.19",
     "@vitest/browser-playwright": "^4.1.9",
     "@vitest/coverage-v8": "^4.1.9",
+    "@vitest/ui": "^4.1.11",
     "autoprefixer": "^10.5.4",
-    "jsdom": "^27.1.0",
+    "jsdom": "^27.4.0",
     "playwright": "^1.61.0",
     "playwright-ng-schematics": "^21.1.1",
     "postcss": "^8.5.26",
     "tailwindcss": "^4.3.3",
     "typescript": "~5.9.2",
-    "vitest": "^4.0.8"
+    "vitest": "^4.1.11"
   }
 }

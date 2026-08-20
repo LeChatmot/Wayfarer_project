@@ -16,7 +16,7 @@ pipeline {
         E2E_HTTPS_PORT = '8443'
         E2E_BASE_URL = "http://localhost:8090"
         PROD_COMPOSE = 'docker-compose.yml'
-        CI= true npx ng test
+        CI = 'true'
         TESTCONTAINERS_RYUK_DISABLED = 'false'
     }
 
@@ -47,6 +47,7 @@ pipeline {
             steps {
                 sh 'chmod +x scripts/generate-secrets.sh'
                 sh './scripts/generate-secrets.sh'
+                sh 'chmod 644 secrets/*.txt'
             }
         }
 
@@ -54,15 +55,18 @@ pipeline {
             parallel {
                 stage('Backend - compile') {
                     steps {
-                        dir("${BACKEND_DIR}") {
-                            sh './mvnw -B -ntp verify'
+                        withEnv(["JAVA_HOME=${tool 'jdk21'}"]) {
+                            dir("${BACKEND_DIR}") {
+                                sh 'chmod +x ./mvnw'
+                                sh './mvnw -B -ntp verify'
+                            }
                         }
                     }
                 }
                 stage('Frontend - install & build') {
                     steps {
                         dir("${FRONTEND_DIR}") {
-                            sh 'npm ci'
+                            sh 'npm install'
                             sh 'npm run build'
                         }
                     }

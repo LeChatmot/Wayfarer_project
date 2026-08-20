@@ -1,18 +1,24 @@
 import { ComponentFixture, TestBed } from '@angular/core/testing';
 
-import { Login } from './login';
+import { LoginComponent } from './login';
 
-describe('Login', () => {
-  let component: Login;
-  let fixture: ComponentFixture<Login>;
+import mockLocalStorage from '../../../core/mock/mockLocalStorage';
+import {provideRouter} from '@angular/router';
+import {LOCAL_STORAGE} from '../../../core/tokens/local-storage.token';
+
+describe('LoginComponent', () => {
+  let component: LoginComponent;
+  let fixture: ComponentFixture<LoginComponent>;
 
   beforeEach(async () => {
     await TestBed.configureTestingModule({
-      imports: [Login]
+      imports: [LoginComponent],
+      providers: [provideRouter([]),
+        { provide: LOCAL_STORAGE, useValue: mockLocalStorage },],
     })
     .compileComponents();
 
-    fixture = TestBed.createComponent(Login);
+    fixture = TestBed.createComponent(LoginComponent);
     component = fixture.componentInstance;
     await fixture.whenStable();
   });
