@@ -7,12 +7,7 @@ import lombok.Setter;
 
 @Entity
 @Table(name = "map_providers")
-public class MapProvider {
-
-    @Getter
-    @Id
-    @GeneratedValue(strategy = GenerationType.IDENTITY)
-    private Integer id;
+public class MapProvider extends BaseEntity {
 
     @Setter
     @Getter
