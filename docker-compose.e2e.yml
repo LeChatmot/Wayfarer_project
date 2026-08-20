@@ -26,6 +26,8 @@ services:
       - postgres_user
       - postgres_password
       - jwt_secret
+      - prometheus_user
+      - prometheus_password
     depends_on:
       postgres:
         condition: service_healthy
@@ -70,6 +72,10 @@ secrets:
     file: ./secrets/postgres_user.txt
   postgres_password:
     file: ./secrets/postgres_password.txt
+  prometheus_user:
+    file: ./secrets/prometheus_user.txt
+  prometheus_password:
+    file: ./secrets/prometheus_password.txt
   jwt_secret:
     file: ./secrets/jwt_secret.txt
 
