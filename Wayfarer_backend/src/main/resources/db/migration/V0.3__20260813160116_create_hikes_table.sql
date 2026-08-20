@@ -1,7 +1,7 @@
 CREATE TABLE IF NOT EXISTS hikes (
      id SERIAL PRIMARY KEY,
      name VARCHAR(60) NOT NULL,
-     id_creator BIGINT,
+     id_creator SERIAL,
      starting_point GEOMETRY(POINT, 4326) NOT NULL,
      back_to_start BOOLEAN NOT NULL DEFAULT false,
      created_at TIMESTAMPTZ NOT NULL DEFAULT NOW(),
