@@ -1,5 +1,5 @@
 CREATE TABLE IF NOT EXISTS items(
-    id BIGSERIAL PRIMARY KEY,
+    id SERIAL PRIMARY KEY,
     item_list_id BIGSERIAL NOT NULL,
     name VARCHAR(60) NOT NULL,
     quantity INTEGER,

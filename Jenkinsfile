@@ -11,7 +11,7 @@ pipeline {
         BACKEND_DIR = 'Wayfarer_backend'
         FRONTEND_DIR = 'Wayfarer_frontend'
         E2E_COMPOSE = 'docker-compose.e2e.yml'
-        E2E_PROJECT = "wayfarer-e2e-${env.BUILD_NUMBER}"
+        E2E_PROJECT = "wayfarer-e2e-${env.BUILD_ID}"
         E2E_HTTP_PORT = '8090'
         E2E_HTTPS_PORT = '8443'
         E2E_BASE_URL = "http://localhost:8090"
@@ -221,6 +221,11 @@ pipeline {
         stage('Tests E2E - environnement iso-prod') {
             steps {
                 script {
+                    sh """
+                        docker compose -f ${E2E_COMPOSE} -p ${E2E_PROJECT} down -v --remove-orphans || true
+                        docker system prune -f --filter "until=24h" || true
+                    """
+
                     try {
                         sh """
                             docker compose -f ${E2E_COMPOSE} -p ${E2E_PROJECT} build --pull
