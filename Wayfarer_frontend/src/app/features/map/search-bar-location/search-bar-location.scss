@@ -19,8 +19,9 @@
 }
 
 .search-box {
-  background-color: var(--mat-sys-surface-container-high);
+  background-color: #F7FBEA;
   border-radius: 32px;
+  border: 1px solid #727A66;
   padding: 8px 8px;
   box-shadow: 0 2px 8px rgba(0, 0, 0, 0.12);
   transition: border-radius 0.2s ease;
@@ -65,10 +66,12 @@
 }
 
 .search-button {
-  color: #1976d2 !important;
+  background-color: #3E6700;
+  color: #F7FBEA;
 
   &:hover {
-    background-color: rgba(25, 118, 210, 0.04);
+    background-color: #F7FBEA;
+    color: #3E6700;
   }
 }
 
@@ -129,10 +132,11 @@
   padding: 12px 16px;
   cursor: pointer;
   transition: background-color 0.15s ease;
+  background-color: #F7FBEA;
 
   &:hover,
   &:focus {
-    background-color: var(--mat-);
+    background-color: #DBF0DF;
     outline: none;
   }
 

@@ -1,56 +1,42 @@
 import { Injectable } from '@angular/core';
 import { HttpClient } from '@angular/common/http';
 import { Observable } from 'rxjs';
-
-export interface Hike {
-  id: number;
-  name: string;
-  description?: string;
-  distance: number;
-  duration: number;
-  difficulty: 'EASY' | 'MODERATE' | 'HARD' | 'EXPERT';
-  gpxData?: string;
-  elevationGain?: number;
-  elevationLoss?: number;
-  createdAt: string;
-}
+import {environment} from '../../../environments/environment';
 
 export interface HikeCreateRequest {
   name: string;
-  description?: string;
-  gpxData: string;
-  distance: number;
-  duration: number;
-  difficulty: string;
+  description: string;
+  backToStart: boolean;
+  gpxContent: string;
+}
+
+export interface HikeResponse {
+  id: number;
+  name: string;
+  description: string;
+  creatorUsername: string;
+  distanceMeters: number;
   elevationGain: number;
   elevationLoss: number;
+  durationSeconds: number | null;
+  backToStart: boolean;
+  favorite: boolean;
 }
 
 @Injectable({ providedIn: 'root' })
 export class HikeService {
-  private apiUrl = '/api/hikes';
 
-  constructor(private http: HttpClient) {}
+  constructor(private readonly http: HttpClient) {}
 
-  getAll(): Observable<Hike[]> {
-    return this.http.get<Hike[]>(this.apiUrl);
+  create(request: HikeCreateRequest): Observable<HikeResponse> {
+    return this.http.post<HikeResponse>(`${environment.apiUrl}/hikes`, request);
   }
 
-  getById(id: number): Observable<Hike> {
-    return this.http.get<Hike>(`${this.apiUrl}/${id}`);
+  addFavorite(hikeId: number): Observable<void> {
+    return this.http.put<void>(`${environment.apiUrl}/hikes/${hikeId}/favorite`, {});
   }
 
-  create(hike: HikeCreateRequest): Observable<Hike> {
-    return this.http.post<Hike>(this.apiUrl, hike);
-  }
-
-  uploadGpx(file: File): Observable<{ distance: number; duration: number; elevationGain: number; elevationLoss: number; gpxData: string }> {
-    const formData = new FormData();
-    formData.append('file', file);
-    return this.http.post<any>(`${this.apiUrl}/upload-gpx`, formData);
-  }
-
-  delete(id: number): Observable<void> {
-    return this.http.delete<void>(`${this.apiUrl}/${id}`);
+  removeFavorite(hikeId: number): Observable<void> {
+    return this.http.delete<void>(`${environment.apiUrl}/hikes/${hikeId}/favorite`);
   }
 }

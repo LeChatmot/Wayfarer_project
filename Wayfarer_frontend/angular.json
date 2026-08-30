@@ -12,6 +12,10 @@
       "schematics": {
         "@schematics/angular:component": {
           "style": "scss"
+        },
+        "@angular/material:theme-color": {
+          "generate": true,
+          "inline": false
         }
       },
       "root": "",
@@ -76,7 +80,7 @@
         "test": {
           "builder": "@angular/build:unit-test",
           "options": {
-            "runnerConfig": true
+            "tsConfig": "tsconfig.spec.json"
           }
         }
       }

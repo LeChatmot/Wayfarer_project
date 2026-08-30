@@ -3,41 +3,63 @@ package com.wayfarer.wayfarer_backend.model;
 import jakarta.persistence.*;
 import lombok.Getter;
 import lombok.Setter;
+import org.locationtech.jts.geom.LineString;
 import org.locationtech.jts.geom.Point;
 
 import java.time.LocalDateTime;
 
 @Entity
 @Table(name = "hikes")
-public class Hike extends BaseEntity{
+public class Hike extends BaseEntity {
 
-    @Getter
     @Setter
+    @Getter
     @Column(nullable = false, length = 60)
     private String name;
 
-    @Getter
     @Setter
-    @Column(name = "id_creator", nullable = false)
-    private Integer creatorId;
+    @Getter
+    @Column(columnDefinition = "TEXT")
+    private String description;
 
-    @Getter
     @Setter
-    @Column(nullable = false, columnDefinition = "geometry(Point,4326)")
-    private Point startingPoint;  // Champ géométrique PostGIS
+    @Getter
+    @ManyToOne(fetch = FetchType.LAZY, optional = false)
+    @JoinColumn(name = "id_creator", nullable = false)
+    private User creator;
 
-    @Getter
     @Setter
+    @Getter
+    @Column(name = "starting_point", nullable = false, columnDefinition = "geometry(POINTZ,4326)")
+    private Point startingPoint;
+
+    @Setter
+    @Getter
+    @Column(nullable = false, columnDefinition = "geometry(LineStringZ,4326)")
+    private LineString path;
+
+    @Setter
+    @Getter
     @Column(name = "back_to_start", nullable = false)
-    private boolean backToStart = false;
+    private boolean backToStart;
 
-    @Getter
     @Setter
-    @Column(name = "created_at", nullable = false, updatable = false)
-    private LocalDateTime createdAt;
+    @Getter
+    @Column(name = "distance_meters", nullable = false)
+    private double distanceMeters;
 
-    @Getter
     @Setter
-    @Column(name = "updated_at", nullable = false)
-    private LocalDateTime updatedAt;
+    @Getter
+    @Column(name = "elevation_gain", nullable = false)
+    private double elevationGain;
+
+    @Setter
+    @Getter
+    @Column(name = "elevation_loss", nullable = false)
+    private double elevationLoss;
+
+    @Setter
+    @Getter
+    @Column(name = "duration_seconds")
+    private Integer durationSeconds;
 }

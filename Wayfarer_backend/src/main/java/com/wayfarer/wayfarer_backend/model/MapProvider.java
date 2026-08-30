@@ -6,35 +6,28 @@ import lombok.Getter;
 import lombok.Setter;
 
 @Entity
+@Setter
+@Getter
 @Table(name = "map_providers")
 public class MapProvider extends BaseEntity {
 
-    @Setter
-    @Getter
     @Column(name = "name")
     @NotNull
     private String name;
 
-    @Setter
-    @Getter
     @Column(name = "url")
     @NotNull
     private String url;
 
-    @Setter
-    @Getter
+
     @Column(name = "attribution")
     @NotNull
     private String attribution;
 
-    @Setter
-    @Getter
     @Column(name = "is_default")
     @NotNull
     private Boolean isDefault;
 
-    @Setter
-    @Getter
     @Column(name = "invertible")
     @NotNull
     private Boolean invertible;

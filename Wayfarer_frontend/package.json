@@ -45,7 +45,6 @@
     "yarn": "^1.22.22"
   },
   "devDependencies": {
-    "@analogjs/vite-plugin-angular": "^2.7.0",
     "@analogjs/vitest-angular": "^2.7.0",
     "@angular/build": "^21.1.2",
     "@angular/cli": "^21.0.4",

@@ -1,0 +1,47 @@
+<h2 mat-dialog-title>Enregistrer la randonnée</h2>
+
+<mat-dialog-content>
+  <div class="dialog-stats">
+    <span>
+      <mat-icon>route</mat-icon>
+      {{ (data.preview.distanceMeters / 1000).toFixed(2) }} km
+    </span>
+    <span class="gain">
+      <mat-icon>trending_up</mat-icon>
+      {{ data.preview.elevationGain | number:'1.0-0' }} m
+    </span>
+    <span class="loss">
+      <mat-icon>trending_down</mat-icon>
+      {{ data.preview.elevationLoss | number:'1.0-0' }} m
+    </span>
+  </div>
+
+  <form [formGroup]="form">
+    <mat-form-field appearance="outline">
+      <mat-label>Nom de la randonnée</mat-label>
+      <input matInput formControlName="name" maxlength="60" cdkFocusInitial>
+      @if (this.form.controls["name"].hasError('required')) {
+        <mat-error>Le nom est obligatoire</mat-error>
+      }
+      @if (this.form.controls["name"].hasError('maxlength')) {
+        <mat-error>60 caractères maximum</mat-error>
+      }
+    </mat-form-field>
+
+    <mat-form-field appearance="outline">
+      <mat-label>Description</mat-label>
+      <textarea matInput formControlName="description" rows="4"></textarea>
+    </mat-form-field>
+
+    <mat-checkbox formControlName="backToStart">
+      Retour au point de départ
+    </mat-checkbox>
+  </form>
+</mat-dialog-content>
+
+<mat-dialog-actions align="end">
+  <button mat-button mat-dialog-close>Annuler</button>
+  <button mat-raised-button color="primary" [mat-dialog-close]="this.form.value" [disabled]="form.invalid">
+    Enregistrer
+  </button>
+</mat-dialog-actions>

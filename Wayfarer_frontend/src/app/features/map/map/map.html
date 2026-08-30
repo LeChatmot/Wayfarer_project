@@ -1,9 +1,46 @@
-<div class="map-wrapper ">
-  <div class="map-search-overlay">
-    <app-search-bar-location
-      (locationSelected)="onLocationSelected($event)"
-    ></app-search-bar-location>
+<div class="map-wrapper">
+  <div class="map-top-overlay">
+    <div class="map-search-overlay">
+      <app-search-bar-location
+        (locationSelected)="onLocationSelected($event)"
+      ></app-search-bar-location>
+    </div>
+
+    @if (isAuthenticated()) {
+      <div class="map-gpx-actions">
+        <input type="file" #gpxInput accept=".gpx" hidden (change)="onGpxFileSelected($event)">
+
+        <button mat-raised-button color="primary" (click)="gpxInput.click()" aria-label="Importer un fichier GPX">
+          <mat-icon>upload_file</mat-icon> Importer un GPX
+        </button>
+      </div>
+    }
   </div>
+
+  @if (gpxPreview(); as preview) {
+    <div class="gpx-preview-panel">
+      <div class="gpx-preview-stats">
+      <span class="stat">
+        <mat-icon>route</mat-icon>
+        {{ (preview.distanceMeters / 1000).toFixed(2) }} km
+      </span>
+        <span class="stat gain">
+        <mat-icon>trending_up</mat-icon>
+        D+ {{ preview.elevationGain | number:'1.0-0' }} m
+      </span>
+        <span class="stat loss">
+        <mat-icon>trending_down</mat-icon>
+        D- {{ preview.elevationLoss | number:'1.0-0' }} m
+      </span>
+      </div>
+      <div class="gpx-preview-buttons">
+        <button mat-raised-button color="accent" (click)="openSaveDialog()">
+          <mat-icon>save</mat-icon> Valider et enregistrer
+        </button>
+        <button mat-button (click)="clearGpx()">Annuler</button>
+      </div>
+    </div>
+  }
 
   <div id="map-container" class="map-container"></div>
 </div>

@@ -1,46 +1,53 @@
-import { Injectable, signal, inject } from '@angular/core';
+import { Injectable } from '@angular/core';
 import { HttpClient } from '@angular/common/http';
 import { Observable, tap } from 'rxjs';
 import { environment } from '../../../environments/environment';
-import { AuthResponse, LoginRequest, RegisterRequest } from '../models/auth.model';
-import { LOCAL_STORAGE } from '../tokens/local-storage.token';
+import { AuthResponse, LoginRequest, RegisterRequest, TokenValidationResponse} from '../models/auth.model';
+import { TokenStorageService } from './token-storage.service';
 
 @Injectable({ providedIn: 'root' })
 export class AuthService {
-  private readonly apiUrl = `${environment.apiUrl}/auth`;
-  private readonly tokenKey = 'wayfarer_token';
-  private readonly http = inject(HttpClient);
-  private readonly storage = inject(LOCAL_STORAGE);
 
-  readonly isAuthenticated = signal(this.hasToken());
+  constructor(
+    private http: HttpClient,
+    private tokenStorage: TokenStorageService
+  ) {}
 
-  register(request: RegisterRequest): Observable<AuthResponse> {
-    return this.http.post<AuthResponse>(`${this.apiUrl}/register`, request).pipe(
-      tap(response => this.storeToken(response.token))
+  login(request: LoginRequest): Observable<AuthResponse> {
+    return this.http.post<AuthResponse>(`${environment.apiUrl}/auth/login`, request).pipe(
+      tap(response => this.tokenStorage.saveTokens(response.accessToken, response.refreshToken))
     );
   }
 
-  login(request: LoginRequest): Observable<AuthResponse> {
-    return this.http.post<AuthResponse>(`${this.apiUrl}/login`, request).pipe(
-      tap(response => this.storeToken(response.token))
+  register(request: RegisterRequest): Observable<AuthResponse> {
+    return this.http.post<AuthResponse>(`${environment.apiUrl}/auth/register`, request).pipe(
+      tap(response => this.tokenStorage.saveTokens(response.accessToken, response.refreshToken))
     );
+  }
+
+  refreshToken(): Observable<AuthResponse> {
+    const refreshToken = this.tokenStorage.getRefreshToken();
+    return this.http.post<AuthResponse>(`${environment.apiUrl}/auth/refresh`, { refreshToken }).pipe(
+      tap(response => this.tokenStorage.saveTokens(response.accessToken, response.refreshToken))
+    );
+  }
+
+  validateToken(): Observable<TokenValidationResponse> {
+    const accessToken = this.tokenStorage.getAccessToken();
+    return this.http.post<TokenValidationResponse>(`${environment.apiUrl}/auth/validate`, {
+      headers: { Authorization: `Bearer ${accessToken}` }
+    });
   }
 
   logout(): void {
-    this.storage.removeItem(this.tokenKey);
-    this.isAuthenticated.set(false);
+    const refreshToken = this.tokenStorage.getRefreshToken();
+    if (refreshToken) {
+      this.http.post(`${environment.apiUrl}/auth/logout`, { refreshToken }).subscribe();
+    }
+    this.tokenStorage.clearTokens();
   }
 
-  getToken(): string | null {
-    return this.storage.getItem(this.tokenKey);
-  }
-
-  private storeToken(token: string): void {
-    this.storage.setItem(this.tokenKey, token);
-    this.isAuthenticated.set(true);
-  }
-
-  private hasToken(): boolean {
-    return !!this.storage.getItem(this.tokenKey);
+  isAuthenticated(): boolean {
+    return this.tokenStorage.hasToken();
   }
 }

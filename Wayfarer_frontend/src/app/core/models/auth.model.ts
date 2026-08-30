@@ -1,7 +1,6 @@
-export interface RegisterRequest {
-  username: string;
-  email: string;
-  password: string;
+export interface AuthResponse {
+  accessToken: string;
+  refreshToken: string;
 }
 
 export interface LoginRequest {
@@ -9,6 +8,13 @@ export interface LoginRequest {
   password: string;
 }
 
-export interface AuthResponse {
-  token: string;
+export interface RegisterRequest {
+  email: string;
+  username: string;
+  password: string;
+}
+
+export interface TokenValidationResponse {
+  valid: boolean;
+  refreshable: boolean;
 }

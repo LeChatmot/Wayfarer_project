@@ -1,16 +1,24 @@
-import { Component, OnDestroy, OnInit } from '@angular/core';
-import { CommonModule } from '@angular/common';
-import { MatButtonModule } from '@angular/material/button';
-import { MatIconModule } from '@angular/material/icon';
-import { MatSliderModule } from '@angular/material/slider';
+import {Component, OnDestroy, OnInit, signal} from '@angular/core';
+import {CommonModule} from '@angular/common';
+import {MatButtonModule} from '@angular/material/button';
+import {MatIconModule} from '@angular/material/icon';
+import {MatSliderModule} from '@angular/material/slider';
 import * as L from 'leaflet';
 import 'leaflet-gpx';
-import { MapProvidersService } from '../../../core/services/map-providers.service';
-import { catchError, EMPTY, take } from 'rxjs';
-import { MapProvidersModel } from '../../../core/models/map-providers.model';
-import { Location} from '../../../core/services/location.service';
-import { SearchBarLocationComponent } from '../search-bar-location/search-bar-location';
+import {MapProvidersService} from '../../../core/services/map-providers.service';
+import {catchError, EMPTY, take} from 'rxjs';
+import {MapProvidersModel} from '../../../core/models/map-providers.model';
+import {Location} from '../../../core/services/location.service';
+import {SearchBarLocationComponent} from '../search-bar-location/search-bar-location';
 import {createMarkerIcon} from '../../../core/utils/marker.utils';
+import {AuthService} from '../../../core/services/auth.service';
+import {HikeService} from '../../../core/services/hike.service';
+import {MatDialog} from '@angular/material/dialog';
+import {MatSnackBar} from '@angular/material/snack-bar';
+import {Router} from '@angular/router';
+import {GpxPreview} from '../../../core/utils/gpx-preview.utils';
+import {HikeSaveDialogComponent} from '../../hikeSearch/hike-save-dialog/hike-save-dialog';
+import {GpxService} from '../../../core/services/gpx.service';
 
 @Component({
   selector: 'app-map',
@@ -29,13 +37,26 @@ export class MapComponent implements OnInit, OnDestroy {
   private map!: L.Map;
   private readonly markersLayer: L.LayerGroup = L.layerGroup();
   private currentMarker?: L.Marker;
+  private gpxLayer?: L.Polyline;
+  private readonly gpxContent?: string;
+  gpxPreview = signal<GpxPreview | null>(null);
+  private gpxRawContent = '';
+  isAuthenticated = signal<boolean>(false)
+
 
   constructor(
     private readonly mapProvidersService: MapProvidersService,
+    private readonly authService: AuthService,
+    private readonly hikeService: HikeService,
+    private readonly gpxService :GpxService,
+    private readonly dialog: MatDialog,
+    private readonly snackBar: MatSnackBar,
+    private readonly router: Router
   ) {}
 
   ngOnInit(): void {
     this.initMap();
+    this.isAuthenticated.set(this.authService.isAuthenticated())
   }
 
   ngOnDestroy(): void {
@@ -50,7 +71,6 @@ export class MapComponent implements OnInit, OnDestroy {
       zoomControl: false
     });
 
-    L.control.zoom({ position: 'bottomright' }).addTo(this.map);
     L.control.scale({ metric: true, position: 'bottomleft' }).addTo(this.map);
 
     this.addBaseLayers();
@@ -124,5 +144,76 @@ export class MapComponent implements OnInit, OnDestroy {
       ${location.type}<br>
       <small>${location.latitude.toFixed(4)}, ${location.longitude.toFixed(4)}</small>
     `).openPopup();
+  }
+
+  onGpxFileSelected(event: Event): void {
+    const input = event.target as HTMLInputElement;
+    const file = input.files?.[0];
+    if (!file) {
+      return;
+    }
+
+    file.text().then(content => {
+      this.gpxRawContent = content;
+      this.gpxService.preview(file).subscribe({
+        next: preview => {
+          this.gpxPreview.set(preview);
+          this.setPreviewLayer(preview.coordinates);
+        },
+        error: () => {
+          this.snackBar.open('Impossible de lire ce fichier GPX', 'OK', { duration: 3000 });
+          this.clearGpx();
+        }
+      });
+    });
+
+    input.value = '';
+  }
+
+  private setPreviewLayer(coordinates: [number, number][]): void {
+    if (this.gpxLayer) {
+      this.map.removeLayer(this.gpxLayer);
+    }
+    this.gpxLayer = L.polyline(coordinates, {
+      color: '#ff5722',
+      weight: 4,
+      opacity: 0.8
+    }).addTo(this.map);
+    this.map.fitBounds(this.gpxLayer.getBounds(), { padding: [40, 40] });
+  }
+
+  clearGpx(): void {
+    if (this.gpxLayer) {
+      this.map.removeLayer(this.gpxLayer);
+      this.gpxLayer = new L.Polyline([]);
+    }
+    this.gpxPreview.set(null);
+    this.gpxRawContent = '';
+  }
+
+  openSaveDialog(): void {
+    const preview = this.gpxPreview();
+    if (!preview) {
+      return;
+    }
+
+    const dialogRef = this.dialog.open(HikeSaveDialogComponent, {
+      width: '480px',
+      maxWidth: '95vw',
+      data: { preview }
+    });
+
+    dialogRef.afterClosed().subscribe(result => {
+      if (!result) {
+        return;
+      }
+      this.gpxService.save({ ...result, gpxContent: this.gpxRawContent }).subscribe({
+        next: () => {
+          this.snackBar.open('Randonnée enregistrée !', 'OK', { duration: 3000 });
+          this.clearGpx();
+        },
+        error: () => this.snackBar.open('Erreur lors de l\'enregistrement', 'OK', { duration: 3000 })
+      });
+    });
   }
 }

@@ -1,6 +1,9 @@
 @use 'themes/light_theme' as light-theme;
 @use 'themes/dark_theme' as dark-theme;
 @use '@angular/material' as mat;
+@include mat.core();
+
+
 
 $wayfarer-light-theme: mat.define-theme((
   color: (
@@ -36,6 +39,7 @@ $wayfarer-dark-theme: mat.define-theme((
   html {
     font-family: Sniglet, sans-serif;
     @include mat.all-component-themes($wayfarer-dark-theme);
+    @include mat.core-theme($wayfarer-dark-theme);
   }
 
   .leaflet-tile-pane {
@@ -55,6 +59,7 @@ $wayfarer-dark-theme: mat.define-theme((
   html {
     font-family: Sniglet, sans-serif;
     @include mat.all-component-themes($wayfarer-light-theme);
+    @include mat.core-theme($wayfarer-light-theme);
   }
 }
 

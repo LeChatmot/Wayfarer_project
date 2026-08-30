@@ -14,21 +14,21 @@ import java.util.Date;
 public class JwtService {
 
     private final SecretKey key;
-    private final long expirationMs;
+    private final long accessTokenExpirationMs;
 
     public JwtService(
             @Value("${jwt.secret}") String secret,
-            @Value("${jwt.expiration-ms}") long expirationMs) {
+            @Value("${jwt.access-token-expiration-ms}") long accessTokenExpirationMs) {
         this.key = Keys.hmacShaKeyFor(secret.getBytes(StandardCharsets.UTF_8));
-        this.expirationMs = expirationMs;
+        this.accessTokenExpirationMs = accessTokenExpirationMs;
     }
 
-    public String generateToken(String email) {
+    public String generateAccessToken(String email) {
         Date now = new Date();
         return Jwts.builder()
                 .subject(email)
                 .issuedAt(now)
-                .expiration(new Date(now.getTime() + expirationMs))
+                .expiration(new Date(now.getTime() + accessTokenExpirationMs))
                 .signWith(key)
                 .compact();
     }

@@ -1,6 +1,52 @@
-<header>
-  <img>
-  <div class="">
-    Le header fonctionne
+<header class="bg-green-900 text-white px-6 py-3 flex items-center justify-between max-h-24">
+  <div class="flex flex-row">
+    <div class="flex items-center gap-2 cursor-pointer" routerLink="/map">
+      <img src="assets/picsvg_modified.svg" alt="Wayfarer" class="h-24">
+    </div>
+    <nav class="flex items-center gap-6">
+      <a
+        mat-raised-button
+        routerLink="/map"
+        routerLinkActive="font-semibold underline"
+        [routerLinkActiveOptions]="{ exact: true }"
+        class="text-white hover:opacity-80 transition-opacity"
+      >
+        Carte
+      </a>
+    </nav>
+  </div>
+  <div>
+    @if (isAuthenticated()) {
+      <a
+        mat-raised-button
+        routerLink="/traces"
+        routerLinkActive="font-semibold underline"
+      >
+        Mon profile
+      </a>
+      <button
+        mat-raised-button
+        type="button"
+        (click)="onLogout()"
+      >
+        Déconnexion
+      </button>
+    } @else {
+      <a
+        mat-raised-button
+        routerLink="/login"
+        routerLinkActive="font-semibold underline"
+      >
+        Connexion
+      </a>
+      <a
+        mat-raised-button
+        color="primary"
+        routerLink="/register"
+        routerLinkActive="font-semibold underline"
+      >
+        Inscription
+      </a>
+    }
   </div>
 </header>
