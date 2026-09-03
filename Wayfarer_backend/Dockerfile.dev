@@ -1,12 +1,12 @@
  FROM eclipse-temurin:21-jdk-alpine
 
-RUN apk add --no-cache bash
+RUN apk add --no-cache bash ca-certificates
 
 WORKDIR /app
 
 COPY .mvn/ .mvn/
 COPY mvnw pom.xml ./
-RUN ./mvnw dependency:go-offline -B
+RUN chmod +x mvnw && ./mvnw dependency:go-offline -B
 
 EXPOSE 8080
 

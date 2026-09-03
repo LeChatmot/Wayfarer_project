@@ -30,4 +30,10 @@ public class MapProviderController {
                 .map(this.mapProviderMapper::toDto)
                 .toList();
     }
+
+    @GetMapping("/plan-ign")
+    @ResponseStatus(HttpStatus.OK)
+    public MapProviderDto getPlanIGNMapProvider() {
+        return this.mapProviderMapper.toDto(this.mapProviderRepository.findByName("Plan IGN V2"));
+    }
 }

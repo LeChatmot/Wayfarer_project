@@ -1,9 +1,7 @@
-#!/usr/bin/env bash
-set -euo pipefail
+#!/bin/sh
+set -eu pipefail
 
-SECRETS_DIR="$(cd "$(dirname "${BASH_SOURCE[0]}")/.." && pwd)/secrets"
-mkdir -p "$SECRETS_DIR"
-chmod 700 "$SECRETS_DIR"
+SECRETS_DIR="./secrets"
 
 generate_if_absent() {
   local file="$SECRETS_DIR/$1"
@@ -17,11 +15,22 @@ generate_if_absent() {
   fi
 }
 
+gen_pg_username() {
+  local prefix="${1:-app}"
+  local len="${2:-8}"
+
+  local first_char=$(tr -dc 'a-z' </dev/urandom | head -c1)
+  local rest=$(tr -dc 'a-z0-9_' </dev/urandom | head -c "$len")
+
+  local name="${prefix}_${first_char}${rest}"
+  echo "${name:0:63}"
+}
+
 random_alnum() {
   LC_ALL=C tr -dc 'A-Za-z0-9' < /dev/urandom | head -c "$1"
 }
 
-generate_if_absent "postgres_user.txt" "wayfarer_app"
+generate_if_absent "postgres_user.txt" "$(gen_pg_username "wayfarer_postgres" 15)"
 generate_if_absent "postgres_password.txt" "$(random_alnum 32)"
 generate_if_absent "prometheus_user.txt" "prometheus"
 generate_if_absent "prometheus_password.txt" "$(random_alnum 32)"

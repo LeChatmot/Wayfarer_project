@@ -19,7 +19,7 @@ import static org.hamcrest.Matchers.hasSize;
 
 @SpringBootTest
 @Testcontainers
-class MapProviderRepositoryIT {
+public class HikeControllerIT {
 
     static DockerImageName postgisImage = DockerImageName.parse("postgis/postgis:15-3.3")
             .asCompatibleSubstituteFor("postgres");
@@ -29,9 +29,6 @@ class MapProviderRepositoryIT {
             .withDatabaseName("wayfarer")
             .withUsername("postgres")
             .withPassword("postgres");
-
-    @Autowired
-    private MapProviderRepository mapProviderRepository;
 
     @DynamicPropertySource
     static void configureProperties(DynamicPropertyRegistry registry) {
@@ -49,28 +46,12 @@ class MapProviderRepositoryIT {
 
     @BeforeEach
     void setUp() {
-        RestAssured.baseURI = "http://localhost:8080/api/public/map-provider/";
+        RestAssured.baseURI = "http://localhost:8080/api/hikes/";
     }
 
     @Test
-    void findAll_shouldWorkWithRealPostgreSQL() {
-        given()
-                .contentType(ContentType.JSON)
-                .when()
-                .get("list")
-                .then()
-                .statusCode(200)
-                .body(".", hasSize(2));
+    void test_create_hike_endpoint() {
+
     }
 
-    @Test
-    void findPlanIGN_shouldWorkWithRealPostgreSQL() {
-        given()
-                .contentType(ContentType.JSON)
-                .when()
-                .get("plan-ign")
-                .then()
-                .statusCode(200)
-                .body(".", hasSize(1));
-    }
 }

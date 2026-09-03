@@ -13,4 +13,8 @@ export class MapProvidersService{
   public getMapProvidersList(): Observable<MapProvidersModel[]>{
     return this.http.get<MapProvidersModel[]>(`${this.apiUrl}/list`);
   }
+
+  public getPlanIGNMapProvier(): Observable<MapProvidersModel>{
+    return this.http.get<MapProvidersModel>(`${this.apiUrl}/plan-ign`);
+  }
 }

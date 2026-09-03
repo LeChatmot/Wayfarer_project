@@ -12,6 +12,7 @@ CREATE TABLE IF NOT EXISTS hikes (
      elevation_gain DOUBLE PRECISION NOT NULL DEFAULT 0,
      elevation_loss DOUBLE PRECISION NOT NULL DEFAULT 0,
      duration_seconds INTEGER,
+     difficulty VARCHAR(20) NOT NULL DEFAULT 'MEDIUM',
      CONSTRAINT fk_user
          FOREIGN KEY(id_creator)
              REFERENCES users(id)

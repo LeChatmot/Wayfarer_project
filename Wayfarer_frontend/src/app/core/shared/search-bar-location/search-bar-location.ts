@@ -5,7 +5,7 @@ import { MatFormFieldModule } from '@angular/material/form-field';
 import { MatInputModule } from '@angular/material/input';
 import { MatIconModule } from '@angular/material/icon';
 import { MatProgressSpinnerModule } from '@angular/material/progress-spinner';
-import { LocationService, Location } from '../../../core/services/location.service';
+import { LocationService, Location } from '../../services/location.service';
 import {MatIconButton} from '@angular/material/button';
 
 @Component({

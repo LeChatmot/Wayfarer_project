@@ -1,24 +1,35 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <configuration>
-    <include resource="org/springframework/boot/logging/logback/defaults.xml"/>
-
-    <appender name="JSON" class="ch.qos.logback.core.ConsoleAppender">
-        <encoder class="net.logstash.logback.encoder.LogstashEncoder">
-            <customFields>{"app_name":"wayfarer-backend","app_version":"1.0.0"}</customFields>
-            <includeContext>false</includeContext>
-            <springProperty scope="context" name="environment" source="spring.profiles.active" defaultValue="unknown"/>
-            <fieldNames>
-                <timestamp>timestamp</timestamp>
-                <message>message</message>
-                <levelValue>level</levelValue>
-                <logger>logger</logger>
-                <thread>thread</thread>
-                <stack_trace>stack_trace</stack_trace>
-            </fieldNames>
+    <appender name="LOKI" class="com.github.loki4j.logback.Loki4jAppender">
+        <http>
+            <url>http://loki:3100/loki/api/v1/push</url>
+        </http>
+        <format>
+            <label>
+                <pattern>app=${name},host=${HOSTNAME},level=%level</pattern>
+                <readMarkers>true</readMarkers>
+            </label>
+            <message>
+                <pattern>
+                    {
+                    "level":"%level",
+                    "class":"%logger{36}",
+                    "thread":"%thread",
+                    "message": "%message",
+                    "requestId": "%X{X-Request-ID}"
+                    }
+                </pattern>
+            </message>
+        </format>
+    </appender>
+    <appender name="CONSOLE" class="ch.qos.logback.core.ConsoleAppender">
+        <encoder>
+            <pattern>%d{HH:mm:ss.SSS} [%thread] %-5level %logger{36} - %msg%n</pattern>
         </encoder>
     </appender>
 
     <root level="INFO">
-        <appender-ref ref="JSON"/>
+        <appender-ref ref="CONSOLE" />
+        <appender-ref ref="LOKI" />
     </root>
 </configuration>

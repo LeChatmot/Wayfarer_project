@@ -20,7 +20,7 @@ export interface HikeResponse {
   distanceMeters: number;
   elevationGain: number;
   elevationLoss: number;
-  startingPoint: { latitude: number; longitude: number };
+  startingPoint: { lat: number; lng: number; alt: number };
   createdBy: string;
   createdAt: string;
 }

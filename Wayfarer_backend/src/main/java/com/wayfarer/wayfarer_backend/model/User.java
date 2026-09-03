@@ -11,25 +11,21 @@ import java.time.Instant;
 import java.util.Collection;
 import java.util.List;
 
+@Setter
+@Getter
 @Entity
 @Table(name = "users")
 public class User extends BaseEntity implements UserDetails {
 
-    @Setter
-    @Getter
     @Column(nullable = false, unique = true, length = 320)
     private String email;
 
-    @Setter
     @Column(nullable = false, length = 72)
     private String password;
 
-    @Setter
     @Column(nullable = false, unique = true, length = 60)
     private String username;
 
-    @Setter
-    @Getter
     @Enumerated(EnumType.STRING)
     @Column(nullable = false, length = 20)
     private Role role;

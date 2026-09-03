@@ -5,9 +5,9 @@ import jakarta.validation.constraints.NotNull;
 import lombok.Getter;
 import lombok.Setter;
 
-@Entity
 @Setter
 @Getter
+@Entity
 @Table(name = "map_providers")
 public class MapProvider extends BaseEntity {
 

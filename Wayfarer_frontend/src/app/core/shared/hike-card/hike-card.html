@@ -1,0 +1,16 @@
+<div>
+  <div id="map-container" class="map-container"></div>
+  <div>
+    <p class="text-ellipsis">nom de la rando</p>
+    <p class="text-ellipsis">lieu de depart</p>
+    <p>h</p>
+    <p>km</p>
+  </div>
+  @if (this.hike?.backToStart){
+    <img alt="icon boucle">
+  } @else {
+    <img alt="icon chemin">
+  }
+  <button>Fiche randonnée</button>
+  <button>bouton favoris</button>
+</div>

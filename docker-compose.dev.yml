@@ -26,14 +26,16 @@ services:
     depends_on:
       postgres:
         condition: service_healthy
+      loki:
+        condition: service_healthy
     environment:
       SPRING_PROFILES_ACTIVE: dev
       SERVER_PORT: 8080
       POSTGRES_HOST: postgres
       POSTGRES_PORT: 5432
       POSTGRES_DB: wayfarer
-      POSTGRES_USER: wayfarer
-      POSTGRES_PASSWORD: wayfarer
+      POSTGRES_USER: postgres
+      POSTGRES_PASSWORD: postgres
       JWT_SECRET: ZGV2LXNlY3JldC1rZXktd2F5ZmFyZXItcHJvamVjdC1taW5pbXVtLTI1Ni1iaXRz
     volumes:
       - ./Wayfarer_backend/src:/app/src
@@ -71,6 +73,26 @@ services:
       - frontend
       - backend
 
+  loki:
+    image: grafana/loki:2.9.4
+    container_name: loki-wayfarer
+    ports:
+      - "3100:3100"
+    volumes:
+      - ./loki-config.yml:/etc/loki/loki-config.yml:ro
+      - loki_data:/loki
+    command: -config.file=/etc/loki/loki-config.yml
+    networks:
+      - dev-network
+    healthcheck:
+      test: [ "CMD", "wget", "--spider", "-q", "http://localhost:3100/ready" ]
+      interval: 5s
+      timeout: 5s
+      retries: 15
+    restart: unless-stopped
+    labels:
+      - "traefik.enable=false"
+
 networks:
   dev-network:
     driver: bridge
@@ -78,3 +100,4 @@ networks:
 volumes:
   postgres_dev_data:
   backend_maven_repo:
+  loki_data:

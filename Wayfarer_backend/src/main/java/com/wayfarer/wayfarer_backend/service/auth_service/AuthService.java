@@ -8,6 +8,8 @@ import com.wayfarer.wayfarer_backend.model.Role;
 import com.wayfarer.wayfarer_backend.model.User;
 import com.wayfarer.wayfarer_backend.repository.UserRepository;
 import org.springframework.beans.factory.annotation.Value;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.http.HttpStatus;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
@@ -15,6 +17,8 @@ import org.springframework.web.server.ResponseStatusException;
 
 @Service
 public class AuthService {
+
+    private final Logger logger = LoggerFactory.getLogger(AuthService.class);
 
     private final UserRepository userRepository;
     private final PasswordEncoder passwordEncoder;
@@ -37,9 +41,11 @@ public class AuthService {
 
     public AuthResponse register(RegisterRequest request) {
         if (userRepository.existsByEmail(request.email())) {
+            this.logger.warn("User with email {} already exists", request.email());
             throw new ResponseStatusException(HttpStatus.CONFLICT, "Email déjà utilisé");
         }
         if (userRepository.existsByUsername(request.username())) {
+            this.logger.warn("Username {} already exists", request.username());
             throw new ResponseStatusException(HttpStatus.CONFLICT, "Nom d'utilisateur déjà utilisé");
         }
         User user = new User();
@@ -49,13 +55,18 @@ public class AuthService {
         user.setRole(Role.ROLE_USER);
         userRepository.save(user);
 
+this.logger.info("create user {}", user.getId());
         return buildAuthResponse(user);
     }
 
     public AuthResponse login(LoginRequest request) {
         User user = userRepository.findByEmail(request.email())
-                .orElseThrow(() -> new ResponseStatusException(HttpStatus.UNAUTHORIZED, "Identifiants invalides"));
+                .orElseThrow(() -> {
+                    this.logger.info("User not found with email {}", request.email());
+                    return new ResponseStatusException(HttpStatus.UNAUTHORIZED, "Identifiants invalides");
+                });
         if (!passwordEncoder.matches(request.password(), user.getPassword())) {
+            this.logger.warn("Wrong password for {}", request.email());
             throw new ResponseStatusException(HttpStatus.UNAUTHORIZED, "Identifiants invalides");
         }
         return buildAuthResponse(user);

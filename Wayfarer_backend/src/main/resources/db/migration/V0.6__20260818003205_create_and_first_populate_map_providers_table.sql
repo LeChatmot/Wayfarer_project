@@ -24,3 +24,11 @@ INSERT INTO map_providers(name, url, attribution, invertible)
         'IGN - Géoportail',
         FALSE
    );
+
+INSERT INTO map_providers(name, url, attribution, invertible)
+VALUES (
+           'Plan OpenStreetMap',
+           'https://tile.openstreetmap.org/{z}/{x}/{y}.png',
+           'OSM - WMTS',
+           TRUE
+       );

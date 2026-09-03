@@ -9,7 +9,7 @@ import {MapProvidersService} from '../../../core/services/map-providers.service'
 import {catchError, EMPTY, take} from 'rxjs';
 import {MapProvidersModel} from '../../../core/models/map-providers.model';
 import {Location} from '../../../core/services/location.service';
-import {SearchBarLocationComponent} from '../search-bar-location/search-bar-location';
+import {SearchBarLocationComponent} from '../../../core/shared/search-bar-location/search-bar-location';
 import {createMarkerIcon} from '../../../core/utils/marker.utils';
 import {AuthService} from '../../../core/services/auth.service';
 import {HikeService} from '../../../core/services/hike.service';
