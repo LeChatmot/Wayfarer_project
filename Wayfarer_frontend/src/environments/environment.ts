@@ -1,5 +1,6 @@
 export const environment = {
-  production: false,
+  production: true,
   apiUrl: '/api',
   apiPublicUrl: "/api/public",
+  staticUrl: ""
 };

@@ -1,5 +1,6 @@
 package com.wayfarer.wayfarer_backend.model;
 
+import com.wayfarer.wayfarer_backend.model.converter.EmailEncryptionConverter;
 import jakarta.persistence.*;
 import lombok.Getter;
 import lombok.Setter;
@@ -17,8 +18,12 @@ import java.util.List;
 @Table(name = "users")
 public class User extends BaseEntity implements UserDetails {
 
-    @Column(nullable = false, unique = true, length = 320)
+    @Convert(converter = EmailEncryptionConverter.class)
+    @Column(name = "email_encrypted", nullable = false)
     private String email;
+
+    @Column(name = "email_hash", nullable = false, unique = true)
+    private String emailHash;
 
     @Column(nullable = false, length = 72)
     private String password;

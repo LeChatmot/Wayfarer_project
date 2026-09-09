@@ -18,6 +18,8 @@ RUN apk add --no-cache bash wget
 
 RUN addgroup -S spring && adduser -S spring -G spring
 
+RUN mkdir -p /var/wayfarer/hike-previews
+
 WORKDIR /app
 
 COPY --from=build /app/target/*.jar app.jar

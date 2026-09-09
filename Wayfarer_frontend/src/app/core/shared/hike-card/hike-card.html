@@ -1,16 +1,28 @@
-<div>
-  <div id="map-container" class="map-container"></div>
-  <div>
-    <p class="text-ellipsis">nom de la rando</p>
-    <p class="text-ellipsis">lieu de depart</p>
-    <p>h</p>
-    <p>km</p>
+<div class="hike-card__preview" [class.hike-card__preview--loaded]="imageLoaded">
+  <img
+    class="hike-card__image"
+    [src]="previewUrl"
+    [alt]="'Aperçu de la randonnée ' + hike.name"
+    loading="lazy"
+    (load)="onImageLoad()"
+    (error)="onImageError()"
+  />
+</div>
+
+<div class="hike-card-body px-2">
+  <h2 class="text-lg">{{ hike.name }}</h2>
+  <h4>{{ hike.startingPointName }}</h4>
+
+  <div>{{ formatDuration(durationInMinutes) }}</div>
+  <div>{{ distanceKm != null ? (distanceKm | number:'1.0-1') + ' km' : '—' }}</div>
+
+  <div class="hike-card-actions">
+    <button matButton="filled" color="primary" type="button" (click)="onClickDetail()">
+      <mat-icon>location_on</mat-icon>
+      Voir plus
+    </button>
+    <button mat-icon-button class="favorite-button" aria-label="Ajouter aux favoris" (click)="onFavoriteClick()">
+        <mat-icon [ngClass]="{'material-symbols-outlined': !isFavorite()}">favorite</mat-icon>
+    </button>
   </div>
-  @if (this.hike?.backToStart){
-    <img alt="icon boucle">
-  } @else {
-    <img alt="icon chemin">
-  }
-  <button>Fiche randonnée</button>
-  <button>bouton favoris</button>
 </div>

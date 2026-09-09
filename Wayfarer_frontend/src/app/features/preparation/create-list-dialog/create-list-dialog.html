@@ -1,0 +1,16 @@
+<h2 mat-dialog-title>Nouvelle liste</h2>
+<form [formGroup]="form" (ngSubmit)="submit()">
+  <mat-dialog-content class="pt-2">
+    <mat-form-field appearance="outline" class="w-full">
+      <mat-label>Nom de la liste</mat-label>
+      <input matInput formControlName="name" maxlength="120" />
+      @if (form.controls.name.hasError('required')) {
+        <mat-error>Le nom est obligatoire</mat-error>
+      }
+    </mat-form-field>
+  </mat-dialog-content>
+  <mat-dialog-actions align="end">
+    <button mat-button type="button" mat-dialog-close>Annuler</button>
+    <button mat-raised-button color="primary" type="submit" [disabled]="form.invalid">Créer</button>
+  </mat-dialog-actions>
+</form>

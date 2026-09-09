@@ -1,30 +1,29 @@
-import { Injectable } from '@angular/core';
-
-const ACCESS_TOKEN_KEY = 'access_token';
-const REFRESH_TOKEN_KEY = 'refresh_token';
+import { Injectable, signal } from '@angular/core';
 
 @Injectable({ providedIn: 'root' })
 export class TokenStorageService {
 
-  saveTokens(accessToken: string, refreshToken: string): void {
-    localStorage.setItem(ACCESS_TOKEN_KEY, accessToken);
-    localStorage.setItem(REFRESH_TOKEN_KEY, refreshToken);
-  }
+  private readonly ACCESS_TOKEN_KEY = 'access_token';
+
+  private readonly accessTokenSignal = signal<string | null>(
+    localStorage.getItem(this.ACCESS_TOKEN_KEY)
+  );
 
   getAccessToken(): string | null {
-    return localStorage.getItem(ACCESS_TOKEN_KEY);
+    return this.accessTokenSignal();
   }
 
-  getRefreshToken(): string | null {
-    return localStorage.getItem(REFRESH_TOKEN_KEY);
+  saveAccessToken(accessToken: string): void {
+    localStorage.setItem(this.ACCESS_TOKEN_KEY, accessToken);
+    this.accessTokenSignal.set(accessToken);
   }
 
   clearTokens(): void {
-    localStorage.removeItem(ACCESS_TOKEN_KEY);
-    localStorage.removeItem(REFRESH_TOKEN_KEY);
+    localStorage.removeItem(this.ACCESS_TOKEN_KEY);
+    this.accessTokenSignal.set(null);
   }
 
-  hasToken(): boolean {
-    return !!this.getAccessToken();
+  hasAccessToken(): boolean {
+    return this.accessTokenSignal() !== null;
   }
 }

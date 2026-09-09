@@ -1,2 +1,31 @@
-<app-hike-card [mapProviderIgn]="IGN_MAP_PROVIDER" [hike]="">
-</app-hike-card>
+<div class="search-wrapper flex bg-gray-50 dark:bg-gray-900">
+  <aside class="w-80 bg-white dark:bg-gray-800 shadow-lg overflow-y-auto border-r dark:border-gray-700">
+    <app-hike-search-filters (criteriaChange)="onSearchCriteriaChange($event)" />
+  </aside>
+
+  <main class="flex-1 flex flex-col result-section">
+    <div class="hikes-grid-container overflow-y-auto flex-1 p-6">
+      @if (hikes.length === 0 && !isLoading) {
+        <div class="flex items-center justify-center h-full">
+          <p class="text-gray-500 dark:text-gray-400 text-lg">
+            Affinez votre recherche pour trouver des randonnées
+          </p>
+        </div>
+      } @else {
+        <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-5 gap-6">
+          @for (hike of hikes; track hike.id) {
+            <app-hike-card
+              [hike]="hike">
+            </app-hike-card>
+          }
+        </div>
+      }
+
+      @if (isLoading) {
+        <div class="flex justify-center items-center py-8">
+          <mat-spinner diameter="40"></mat-spinner>
+        </div>
+      }
+    </div>
+  </main>
+</div>

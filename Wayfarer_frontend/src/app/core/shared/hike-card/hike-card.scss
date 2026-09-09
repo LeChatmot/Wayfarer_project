@@ -1,0 +1,31 @@
+:host{
+  display: flex;
+  flex-direction: column;
+  width: 250px;
+  height: 400px;
+  transition: all 0.3s ease;
+  border-radius: 32px 32px 15px 15px;
+  border: solid 1px #000;
+  overflow: hidden;
+  background-color: #F7FBEA;
+  color: #424937;
+
+  &:hover {
+    transform: translateY(-4px);
+
+    .hike-card-actions{
+      display: flex;
+    }
+  }
+
+  .hike-card-actions {
+    display: none;
+    position: absolute;
+    top: 340px;
+    right: 10px;
+  }
+
+  .favorite-button{
+    background-color: #CCEEA1;
+  }
+}

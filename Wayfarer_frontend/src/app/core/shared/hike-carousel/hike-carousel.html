@@ -1,0 +1,35 @@
+<div class="hike-carousel">
+  @if (initialLoading) {
+    <div class="hike-carousel__status">Chargement…</div>
+  } @else if (items.length === 0) {
+    <div class="hike-carousel__status">{{ emptyMessage }}</div>
+  } @else {
+    <div class="hike-carousel__track">
+      <button mat-icon-button
+              class="hike-carousel__nav"
+              [disabled]="!canGoPrev"
+              (click)="prev()"
+              aria-label="Précédent">
+        <mat-icon>chevron_left</mat-icon>
+      </button>
+
+      <div class="hike-carousel__items">
+        @for (hike of visibleItems; track hike.id) {
+          <app-hike-card [hike]="hike" (open)="onOpen($event)"></app-hike-card>
+        }
+      </div>
+
+      <button mat-icon-button
+              class="hike-carousel__nav"
+              [disabled]="!canGoNext"
+              (click)="next()"
+              aria-label="Suivant">
+        <mat-icon>chevron_right</mat-icon>
+      </button>
+    </div>
+
+    @if (loading) {
+      <div class="hike-carousel__status hike-carousel__status--inline">Chargement…</div>
+    }
+  }
+</div>

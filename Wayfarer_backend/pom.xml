@@ -23,7 +23,6 @@
         <sonar.projectName>Wayfarer Backend</sonar.projectName>
         <sonar.coverage.jacoco.xmlReportPaths>${project.build.directory}/site/jacoco-merged/jacoco.xml</sonar.coverage.jacoco.xmlReportPaths>
         <sonar.junit.reportPaths>${project.build.directory}/surefire-reports,${project.build.directory}/failsafe-reports</sonar.junit.reportPaths>
-        <sonar.exclusions>**/model/**,**/dto/**,**/config/**</sonar.exclusions>
         <surefireArgLine/>
         <failsafeArgLine/>
         <testcontainers.version>2.0.5</testcontainers.version>

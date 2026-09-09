@@ -1,21 +1,25 @@
 CREATE TABLE IF NOT EXISTS hikes (
      id SERIAL PRIMARY KEY,
      name VARCHAR(60) NOT NULL,
-     id_creator SERIAL,
-     starting_point GEOMETRY(POINTZ, 4326) NOT NULL,
+     id_creator INTEGER,
+     starting_point GEOGRAPHY(POINTZ, 4326) NOT NULL,
+     starting_point_name VARCHAR(250) NOT NULL,
      back_to_start BOOLEAN NOT NULL DEFAULT false,
      created_at TIMESTAMPTZ NOT NULL DEFAULT NOW(),
      updated_at TIMESTAMPTZ NOT NULL DEFAULT NOW(),
      description TEXT,
-     path GEOMETRY(LINESTRINGZ, 4326) NOT NULL DEFAULT 'LINESTRINGZ EMPTY',
+     path GEOGRAPHY(LINESTRINGZ, 4326) NOT NULL DEFAULT 'LINESTRINGZ EMPTY',
      distance_meters DOUBLE PRECISION NOT NULL DEFAULT 0,
      elevation_gain DOUBLE PRECISION NOT NULL DEFAULT 0,
      elevation_loss DOUBLE PRECISION NOT NULL DEFAULT 0,
      duration_seconds INTEGER,
      difficulty VARCHAR(20) NOT NULL DEFAULT 'MEDIUM',
+     preview_image_light_url VARCHAR(500),
+     preview_image_dark_url VARCHAR(500),
      CONSTRAINT fk_user
          FOREIGN KEY(id_creator)
              REFERENCES users(id)
+             ON DELETE SET NULL
 );
 ALTER TABLE hikes ALTER COLUMN path DROP DEFAULT;
 
@@ -24,8 +28,8 @@ CREATE INDEX IF NOT EXISTS idx_hikes_path ON hikes USING GIST(path);
 CREATE INDEX IF NOT EXISTS idx_hikes_creator ON hikes(id_creator);
 
 CREATE TABLE IF NOT EXISTS favorites (
-     user_id BIGINT NOT NULL,
-     hike_id BIGINT NOT NULL,
+     user_id INTEGER NOT NULL,
+     hike_id INTEGER NOT NULL,
      created_at TIMESTAMPTZ NOT NULL DEFAULT NOW(),
      PRIMARY KEY (user_id, hike_id),
      CONSTRAINT fk_favorite_user FOREIGN KEY (user_id) REFERENCES users(id) ON DELETE CASCADE,

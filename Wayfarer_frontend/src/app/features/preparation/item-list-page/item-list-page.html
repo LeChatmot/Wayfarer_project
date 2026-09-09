@@ -1,0 +1,70 @@
+<div class="items_lists_container p-6 max-w-4xl flex flex-col gap-6">
+  <div class="flex items-center justify-between">
+    <h1 class="text-2xl">Mes listes de matériel</h1>
+    <button mat-raised-button color="primary" (click)="openCreateListDialog()">
+      <mat-icon>add</mat-icon> Nouvelle liste
+    </button>
+  </div>
+
+  @for (list of lists(); track list.id) {
+    <mat-expansion-panel>
+      <mat-expansion-panel-header>
+        <mat-panel-title>{{ list.name }}</mat-panel-title>
+        <mat-panel-description>{{ list.items.length }} objet(s)</mat-panel-description>
+      </mat-expansion-panel-header>
+
+      <div class="flex justify-end gap-2 mb-3">
+        <button mat-stroked-button color="primary" (click)="openAddItemDialog(list)">
+          <mat-icon>add</mat-icon> Ajouter un objet
+        </button>
+        <button mat-stroked-button color="warn" (click)="deleteList(list)">
+          <mat-icon>delete</mat-icon> Supprimer la liste
+        </button>
+      </div>
+
+      <div class="max-h-80 overflow-auto rounded-lg border border-gray-200">
+        <table mat-table [dataSource]="list.items" class="w-full">
+
+          <ng-container matColumnDef="checked" sticky>
+            <th mat-header-cell *matHeaderCellDef class="w-12"></th>
+            <td mat-cell *matCellDef="let item">
+              <mat-checkbox (change)="toggleChecked(item.id, $event.checked)"></mat-checkbox>
+            </td>
+          </ng-container>
+
+          <ng-container matColumnDef="name">
+            <th mat-header-cell *matHeaderCellDef>Nom</th>
+            <td mat-cell *matCellDef="let item">{{ item.name }}</td>
+          </ng-container>
+
+          <ng-container matColumnDef="quantity">
+            <th mat-header-cell *matHeaderCellDef>Quantité</th>
+            <td mat-cell *matCellDef="let item">{{ item.quantity ?? '—' }}</td>
+          </ng-container>
+
+          <ng-container matColumnDef="actions">
+            <th mat-header-cell *matHeaderCellDef class="w-24">Actions</th>
+            <td mat-cell *matCellDef="let item">
+              <button mat-icon-button color="primary" (click)="openEditItemDialog(list, item)" aria-label="Modifier">
+                <mat-icon>edit</mat-icon>
+              </button>
+              <button mat-icon-button color="warn" (click)="removeItem(list, item.id)" aria-label="Supprimer">
+                <mat-icon>delete</mat-icon>
+              </button>
+            </td>
+          </ng-container>
+
+          <tr mat-header-row *matHeaderRowDef="displayedColumns; sticky: true"></tr>
+          <tr mat-row *matRowDef="let row; columns: displayedColumns"
+              [class.bg-green-50]="isChecked(row.id)"></tr>
+        </table>
+
+        @if (list.items.length === 0) {
+          <p class="p-4 text-gray-500 text-sm">Cette liste est vide.</p>
+        }
+      </div>
+    </mat-expansion-panel>
+  } @empty {
+    <p class="text-gray-500">Vous n'avez pas encore de liste. Créez-en une !</p>
+  }
+</div>

@@ -1,5 +1,8 @@
 package com.wayfarer.wayfarer_backend.dto.auth_dto;
 
+import lombok.Getter;
+
+@Getter
 public class AuthResponse {
 
     private String accessToken;
@@ -10,11 +13,4 @@ public class AuthResponse {
         this.refreshToken = refreshToken;
     }
 
-    public String getAccessToken() {
-        return accessToken;
-    }
-
-    public String getRefreshToken() {
-        return refreshToken;
-    }
 }

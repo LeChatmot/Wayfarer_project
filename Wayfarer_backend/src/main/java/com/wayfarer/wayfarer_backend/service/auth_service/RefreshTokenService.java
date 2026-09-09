@@ -13,32 +13,40 @@ import java.util.UUID;
 public class RefreshTokenService {
 
     private final RefreshTokenRepository refreshTokenRepository;
+    private final JwtService jwtService;
 
-    public RefreshTokenService(RefreshTokenRepository refreshTokenRepository) {
+    public RefreshTokenService(RefreshTokenRepository refreshTokenRepository, JwtService jwtService) {
         this.refreshTokenRepository = refreshTokenRepository;
+        this.jwtService = jwtService;
     }
 
     public RefreshToken createRefreshToken(User user, long expirationMs) {
-        refreshTokenRepository.deleteByUserId(user.getId());
-
         RefreshToken refreshToken = new RefreshToken();
         refreshToken.setUser(user);
-        refreshToken.setToken(UUID.randomUUID().toString());
+        refreshToken.setToken(jwtService.generateOpaqueRefreshToken());
         refreshToken.setExpiryDate(Instant.now().plusMillis(expirationMs));
         refreshToken.setRevoked(false);
-
         return refreshTokenRepository.save(refreshToken);
+    }
+
+    public RefreshToken createFor(User user) {
+        return createRefreshToken(user, jwtService.getRefreshTokenExpirationMs());
     }
 
     public Optional<RefreshToken> findByToken(String token) {
         return refreshTokenRepository.findByToken(token);
     }
 
-    public boolean isExpired(RefreshToken token) {
-        return token.getExpiryDate().isBefore(Instant.now());
+    public boolean isExpired(RefreshToken refreshToken) {
+        return refreshToken.isExpired();
+    }
+
+    public void revoke(RefreshToken refreshToken) {
+        refreshToken.setRevoked(true);
+        refreshTokenRepository.save(refreshToken);
     }
 
     public void revokeAllForUser(Integer userId) {
-        refreshTokenRepository.deleteByUserId(userId);
+        refreshTokenRepository.revokeAllByUserId(userId);
     }
 }

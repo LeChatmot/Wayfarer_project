@@ -12,7 +12,7 @@ services:
     volumes:
       - postgres_data:/var/lib/postgresql/data
     ports:
-      - "57533:5432"
+      - "5432"
     networks:
       - backend-network
     healthcheck:
@@ -30,6 +30,8 @@ services:
       - prometheus_password
       - prometheus_user
       - jwt_secret
+      - encryption_secret
+      - hash_secret
     depends_on:
       postgres:
         condition: service_healthy
@@ -39,6 +41,7 @@ services:
       POSTGRES_PORT: 5432
       POSTGRES_DB: wayfarer
       LOGGING_CONFIG: /config/logback-spring.xml
+      COOKIE_SECURE: true
     ports:
       - "8080"
     networks:
@@ -74,48 +77,6 @@ services:
       - backend-network
     restart: unless-stopped
 
-  postgres-exporter:
-    image: prometheuscommunity/postgres-exporter:v0.15.0
-    container_name: postgres-exporter-wayfarer
-    entrypoint: [ "/usr/local/bin/entrypoint-postgres-exporter.sh" ]
-    volumes:
-      - ./scripts/entrypoint-postgres-exporter.sh:/usr/local/bin/entrypoint-postgres-exporter.sh:ro
-    secrets:
-      - postgres_user
-      - postgres_password
-    ports:
-      - "9187:9187"
-    networks:
-      - backend-network
-    depends_on:
-      postgres:
-        condition: service_healthy
-    restart: unless-stopped
-
-  prometheus:
-    image: prom/prometheus:v2.54.1
-    container_name: prometheus-wayfarer
-    secrets:
-      - prometheus_user
-      - prometheus_password
-    volumes:
-      - ./prometheus.yml:/etc/prometheus/prometheus.yml:ro
-      - ./secrets/prometheus_password.txt:/etc/prometheus/secrets/prometheus_password.txt:ro
-      - ./secrets/prometheus_user.txt:/etc/prometheus/secrets/prometheus_user.txt:ro
-      - prometheus_data:/prometheus
-    command:
-      - '--config.file=/etc/prometheus/prometheus.yml'
-      - '--storage.tsdb.path=/prometheus'
-      - '--storage.tsdb.retention.time=200h'
-      - '--web.enable-lifecycle'
-      - '--web.console.libraries=/usr/share/prometheus/console_libraries'
-      - '--web.console.templates=/usr/share/prometheus/consoles'
-    ports:
-      - "9090:9090"
-    networks:
-      - backend-network
-    restart: unless-stopped
-
   loki:
     image: grafana/loki:2.9.4
     container_name: loki-wayfarer
@@ -136,20 +97,6 @@ services:
     labels:
       - "traefik.enable=false"
 
-  promtail:
-    image: grafana/promtail:2.9.4
-    container_name: promtail-wayfarer
-    volumes:
-      - /var/log:/var/log:ro
-      - ./promtail.yml:/etc/promtail/config.yml:ro
-      - /var/lib/docker/containers:/var/lib/docker/containers:ro
-    command: -config.file=/etc/promtail/config.yml
-    networks:
-      - backend-network
-    depends_on:
-      - loki
-    restart: unless-stopped
-
   grafana:
     image: grafana/grafana:latest
     container_name: grafana-wayfarer
@@ -168,7 +115,7 @@ services:
       - ./grafana/dashboards:/var/lib/grafana/dashboards:ro
       - grafana_data:/var/lib/grafana
     ports:
-      - "3000:3000"
+      - "3000"
     depends_on:
       prometheus:
         condition: service_started
@@ -221,6 +168,10 @@ secrets:
     file: ./secrets/grafana_admin_password.txt
   jwt_secret:
     file: ./secrets/jwt_secret.txt
+  encryption_secret:
+    file: ./secrets/encryption_key.txt
+  hash_secret:
+    file: ./secrets/hash_key.txt
 
 networks:
   backend-network:

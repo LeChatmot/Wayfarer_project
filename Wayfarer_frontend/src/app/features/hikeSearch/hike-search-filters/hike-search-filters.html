@@ -1,0 +1,203 @@
+<div class="search-filters space-y-6 p-4 shadow-sm">
+  <div class="flex justify-center">
+    <app-search-bar-location
+      class="w-full max-w-md"
+      (locationSelected)="onLocationSelected($event)"
+    ></app-search-bar-location>
+  </div>
+
+  <form [formGroup]="form" class="space-y-6">
+    <div class="search-filter p-4 rounded-lg shadow-sm border border-gray-200">
+      <h3 class="text-lg text-gray-800 mb-3">
+        Filtres de difficulté
+      </h3>
+
+      <mat-form-field appearance="outline" class="w-full">
+        <mat-label class="text-gray-600">
+          Difficulté
+        </mat-label>
+
+        <mat-select
+          formControlName="difficulty"
+          class="text-gray-800"
+        >
+          <mat-option
+            [value]="null"
+            class="text-gray-700"
+          >
+            Aucune
+          </mat-option>
+
+          @for (difficulty of difficulties; track difficulty) {
+            <mat-option
+              [value]="difficulty"
+              class="text-gray-800"
+            >
+              {{ difficultyLabels[difficulty] }}
+            </mat-option>
+          }
+        </mat-select>
+      </mat-form-field>
+    </div>
+
+    <div class="search-filter p-4 rounded-lg shadow-sm border border-gray-200">
+      <mat-slide-toggle
+        formControlName="backToStart"
+        class="text-gray-800 font-medium"
+      >
+        <span class="ml-2">
+          Aller-retour uniquement
+        </span>
+      </mat-slide-toggle>
+    </div>
+
+    <div class="search-filter p-4 rounded-lg shadow-sm border border-gray-200 space-y-4">
+      <h3 class="text-lg text-gray-800">
+        Distance
+      </h3>
+
+      <mat-slider
+        [min]="0"
+        [max]="lastDistanceIndex"
+        [step]="1"
+        [discrete]="true"
+        [displayWith]="formatDistanceLabel"
+        class="w-full"
+        discrete
+      >
+        <input
+          matSliderStartThumb
+          formControlName="distanceMinIndex"
+          [min]="0"
+          [max]="form.get('distanceMaxIndex')?.value ?? lastDistanceIndex"
+          [step]="1"
+          (input)="validateDistanceRange()"
+          aria-label="Distance minimale"
+        >
+
+        <input
+          matSliderEndThumb
+          formControlName="distanceMaxIndex"
+          [min]="form.get('distanceMinIndex')?.value ?? 0"
+          [max]="lastDistanceIndex"
+          [step]="1"
+          (input)="validateDistanceRange()"
+          aria-label="Distance maximale"
+        >
+      </mat-slider>
+    </div>
+
+    <div class="search-filter p-4 rounded-lg shadow-sm border border-gray-200 space-y-4">
+      <h3 class="text-lg text-gray-800">
+        Dénivelé positif
+      </h3>
+
+      <mat-slider
+        [min]="0"
+        [max]="lastElevationIndex"
+        [step]="1"
+        [discrete]="true"
+        [displayWith]="formatElevationLabel"
+        class="w-full"
+        discrete
+      >
+        <input
+          matSliderStartThumb
+          formControlName="elevationGainMinIndex"
+          [min]="0"
+          [max]="form.get('elevationGainMaxIndex')?.value ?? lastElevationIndex"
+          [step]="1"
+          (input)="validateElevationRange('elevationGain')"
+          aria-label="Dénivelé positif minimal"
+        >
+
+        <input
+          matSliderEndThumb
+          formControlName="elevationGainMaxIndex"
+          [min]="form.get('elevationGainMinIndex')?.value ?? 0"
+          [max]="lastElevationIndex"
+          [step]="1"
+          (input)="validateElevationRange('elevationGain')"
+          aria-label="Dénivelé positif maximal"
+        >
+      </mat-slider>
+    </div>
+
+    <div class="search-filter p-4 rounded-lg shadow-sm border border-gray-200 space-y-4">
+      <h3 class="text-lg text-gray-800">
+        Dénivelé positif
+      </h3>
+
+      <mat-slider
+        [min]="0"
+        [max]="lastElevationIndex"
+        [step]="1"
+        [discrete]="true"
+        [displayWith]="formatElevationLabel"
+        class="w-full"
+        discrete
+      >
+        <input
+          matSliderStartThumb
+          formControlName="elevationLossMinIndex"
+          [min]="0"
+          [max]="form.get('elevationLossMaxIndex')?.value ?? lastElevationIndex"
+          [step]="1"
+          (input)="validateElevationRange('elevationGain')"
+          aria-label="Dénivelé positif minimal"
+        >
+
+        <input
+          matSliderEndThumb
+          formControlName="elevationLossMaxIndex"
+          [min]="form.get('elevationLossMinIndex')?.value ?? 0"
+          [max]="lastElevationIndex"
+          [step]="1"
+          (input)="validateElevationRange('elevationGain')"
+          aria-label="Dénivelé positif maximal"
+        >
+      </mat-slider>
+    </div>
+
+    <div class="search-filter p-4 rounded-lg shadow-sm border border-gray-200 space-y-4">
+      <h3 class="text-lg text-gray-800">
+        Durée
+      </h3>
+
+      <div class="space-y-3">
+        <mat-slider
+          [min]="0"
+          [max]="lastDurationIndex"
+          [step]="1"
+          [discrete]="true"
+          [displayWith]="formatDurationLabel"
+          class="w-full"
+          showTickMarks
+          discrete
+        >
+          <input
+            matSliderStartThumb
+            formControlName="durationMinIndex"
+            [min]="0"
+            [max]="form.get('durationMaxIndex')?.value ?? lastDurationIndex"
+            [step]="1"
+            aria-label="Durée minimale"
+            (input)="validateDurationRange()"
+            class="w-20 text-center text-sm border border-gray-300 rounded px-2 py-1 focus:ring-2 focus:ring-blue-500 focus:border-blue-500"
+          >
+
+          <input
+            matSliderEndThumb
+            formControlName="durationMaxIndex"
+            [min]="form.get('durationMinIndex')?.value ?? 0"
+            [max]="lastDurationIndex"
+            [step]="1"
+            aria-label="Durée maximale"
+            (input)="validateDurationRange()"
+            class="w-20 text-center text-sm border border-gray-300 rounded px-2 py-1 focus:ring-2 focus:border-blue-500 focus:border-blue-500"
+          >
+        </mat-slider>
+      </div>
+    </div>
+  </form>
+</div>

@@ -54,12 +54,8 @@ export class RegisterComponent {
 
   onSubmit(): void {
     if (this.registerForm.invalid) {
-      this.registerForm.markAllAsTouched();
       return;
     }
-
-    this.isLoading = true;
-    this.serverError = null;
 
     const { username, email, password } = this.registerForm.value;
 

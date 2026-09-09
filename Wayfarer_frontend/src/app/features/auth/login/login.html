@@ -1,4 +1,4 @@
-<div class="auth-container">
+<div class="auth-container w-full">
   <mat-card class="auth-card">
     <mat-card-header>
       <mat-card-title>Connexion</mat-card-title>
@@ -36,7 +36,7 @@
           <div class="server-error">{{ serverError }}</div>
         }
 
-        <button mat-raised-button color="primary" type="submit" [disabled]="isLoading" class="submit-button">
+        <button matButton="outlined" color="primary" type="submit" [disabled]="isLoading" class="submit-button">
           @if (isLoading) {
             <mat-spinner diameter="20"></mat-spinner>
           } @else {

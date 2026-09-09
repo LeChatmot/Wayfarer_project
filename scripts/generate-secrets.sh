@@ -36,5 +36,7 @@ generate_if_absent "prometheus_user.txt" "prometheus"
 generate_if_absent "prometheus_password.txt" "$(random_alnum 32)"
 generate_if_absent "grafana_admin_password.txt" "$(random_alnum 32)"
 generate_if_absent "jwt_secret.txt" "$(openssl rand -base64 48 | tr -d '\n')"
+generate_if_absent "encryption_key.txt" "$(openssl rand -base64 32 | tr -d '\n')"
+generate_if_absent "hash_key.txt" "$(openssl rand -base64 32 | tr -d '\n')"
 
 echo "Secrets disponibles dans $SECRETS_DIR"

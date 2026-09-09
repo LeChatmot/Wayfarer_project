@@ -1,1 +1,77 @@
-<p>profile works!</p>
+<div class="profile">
+  <section class="profile__info">
+    <div class="profile__info-header">
+      <h2 class="text-xl">Mon profil</h2>
+    </div>
+
+    @if (!user()) {
+      <p>Chargement du profil…</p>
+    } @else if (mode() === 'view') {
+      <form class="profile__infos flex flex-col">
+        <mat-form-field>
+          <mat-label>Nom d’utilisateur</mat-label>
+          <input matInput value="{{user()!.username}}" disabled>
+        </mat-form-field>
+        <mat-form-field>
+          <mat-label>Email</mat-label>
+          <input matInput value="{{user()!.email}}" disabled>
+        </mat-form-field>
+      </form>
+    } @else {
+      <form [formGroup]="form" (ngSubmit)="save()" class="profile__infos flex flex-col">
+        <mat-form-field>
+          <mat-label>Nom d’utilisateur</mat-label>
+          <input matInput type="text" formControlName="username" />
+          @if (form.controls['username'].invalid && form.controls['username'].touched) {
+            <mat-error class="profile__error">3 à 60 caractères requis.</mat-error>
+          }
+        </mat-form-field>
+        <mat-form-field>
+          <mat-label>Email</mat-label>
+          <input matInput value="{{user()!.email}}" formControlName="email">
+          @if (form.controls['email'].invalid && form.controls['email'].touched) {
+            <mat-error class="profile__error">Email invalide.</mat-error>
+          }
+        </mat-form-field>
+
+        @if (errorMessage()) {
+          <p class="profile__error">{{ errorMessage() }}</p>
+        }
+      </form>
+      <div class="profile__form-actions">
+        <button mat-flat-button color="primary" type="submit" [disabled]="mode() === 'saving'">
+          {{ mode() === 'saving' ? 'Enregistrement…' : 'Enregistrer' }}
+        </button>
+        <button mat-stroked-button type="button" (click)="cancelEditing()" [disabled]="mode() === 'saving'">
+          Annuler
+        </button>
+      </div>
+    }
+    <div class="flex gap-1">
+      @if (mode() === 'view') {
+        <button mat-stroked-button (click)="startEditing()" [disabled]="!user()">Modifier</button>
+      }
+      @if (mode() === 'view') {
+        <button mat-stroked-button class="delete-button" (click)="deleteAccount()" [disabled]="!user()">Supprimer</button>
+      }
+    </div>
+  </section>
+
+  <section class="profile__favorites">
+    <h2>Mes randonnées favorites</h2>
+    <app-hike-carousel
+      [loadPage]="loadFavorites"
+      emptyMessage="Vous n'avez pas encore de randonnée favorite."
+      (openHike)="onOpenHike($event)">
+    </app-hike-carousel>
+  </section>
+
+  <section class="profile__created">
+    <h2>Mes randonnées créées</h2>
+    <app-hike-carousel
+      [loadPage]="loadMyHikes"
+      emptyMessage="Vous n'avez pas encore créé de randonnée."
+      (openHike)="onOpenHike($event)">
+    </app-hike-carousel>
+  </section>
+</div>

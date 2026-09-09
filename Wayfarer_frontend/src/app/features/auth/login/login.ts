@@ -48,14 +48,12 @@ export class LoginComponent {
 
   onSubmit(): void {
     if (this.loginForm.invalid) {
-      this.loginForm.markAllAsTouched();
       return;
     }
 
-    this.isLoading = true;
-    this.serverError = null;
+    const { email, password } = this.loginForm.value;
 
-    this.authService.login(this.loginForm.value).subscribe({
+    this.authService.login(email, password).subscribe({
       next: () => this.router.navigate(['/map']),
       error: (err) => {
         this.isLoading = false;

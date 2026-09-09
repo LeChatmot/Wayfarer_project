@@ -6,13 +6,16 @@ import lombok.Setter;
 import org.locationtech.jts.geom.LineString;
 import org.locationtech.jts.geom.Point;
 
-import java.time.LocalDateTime;
+import java.time.Instant;
 
 @Setter
 @Getter
 @Entity
 @Table(name = "hikes")
 public class Hike extends BaseEntity {
+
+    @Column(name = "created_at")
+    private Instant createdAt;
 
     @Column(nullable = false, length = 60)
     private String name;
@@ -21,13 +24,16 @@ public class Hike extends BaseEntity {
     private String description;
 
     @ManyToOne(fetch = FetchType.LAZY, optional = false)
-    @JoinColumn(name = "id_creator", nullable = false)
+    @JoinColumn(name = "id_creator")
     private User creator;
 
-    @Column(name = "starting_point", nullable = false, columnDefinition = "geometry(POINTZ,4326)")
+    @Column(name = "starting_point", nullable = false, columnDefinition = "geography(POINTZ,4326)")
     private Point startingPoint;
 
-    @Column(nullable = false, columnDefinition = "geometry(LineStringZ,4326)")
+    @Column(name = "starting_point_name", nullable = false)
+    private String startingPointName;
+
+    @Column(nullable = false, columnDefinition = "geography(LineStringZ,4326)")
     private LineString path;
 
     @Column(name = "back_to_start", nullable = false)
@@ -49,15 +55,10 @@ public class Hike extends BaseEntity {
     @Column(name = "difficulty")
     private HikeDifficulty hikeDifficulty;
 
-    public void setDifficultyFromKmEffort(){
-        Double kmEffort = this.getDistanceMeters()/1000 + this.getElevationGain()/100 + this.getElevationLoss()/400;
-        if (kmEffort < 10L){
-            this.setHikeDifficulty(HikeDifficulty.EASY);
-        } else if (kmEffort < 20L){
-            this.setHikeDifficulty(HikeDifficulty.MEDIUM);
-        }  else if (kmEffort < 30L){
-            this.setHikeDifficulty(HikeDifficulty.HARD);
-        }
-        this.setHikeDifficulty(HikeDifficulty.VERY_HARD);
-    }
+    @Column(name = "preview_image_light_url", length = 500)
+    private String previewImageLightUrl;
+
+    @Column(name = "preview_image_dark_url", length = 500)
+    private String previewImageDarkUrl;
+
 }

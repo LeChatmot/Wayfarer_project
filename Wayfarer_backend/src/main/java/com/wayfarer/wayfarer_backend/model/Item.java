@@ -1,10 +1,18 @@
 package com.wayfarer.wayfarer_backend.model;
 
 import jakarta.persistence.*;
+import lombok.Getter;
+import lombok.Setter;
 
+@Getter
+@Setter
 @Entity
 @Table(name = "items")
 public class Item extends BaseEntity {
+
+    @ManyToOne(fetch = FetchType.LAZY)
+    @JoinColumn(name = "item_list_id", nullable = false)
+    private ItemList itemList;
 
     @Column(name = "name", nullable = false, length = 60)
     private String name;
@@ -12,31 +20,12 @@ public class Item extends BaseEntity {
     @Column(name = "quantity")
     private Integer quantity;
 
-    @ManyToOne(fetch = FetchType.LAZY)
-    @JoinColumn(name = "item_list_id", nullable = false)
-    private ItemList itemList;
-
-    public String getName() {
-        return name;
+    public Item() {
     }
 
-    public void setName(String name) {
-        this.name = name;
-    }
-
-    public Integer getQuantity() {
-        return quantity;
-    }
-
-    public void setQuantity(Integer quantity) {
-        this.quantity = quantity;
-    }
-
-    public ItemList getItemList() {
-        return itemList;
-    }
-
-    public void setItemList(ItemList itemList) {
+    public Item(ItemList itemList, String name, Integer quantity) {
         this.itemList = itemList;
+        this.name = name;
+        this.quantity = quantity;
     }
 }

@@ -1,6 +1,7 @@
 package com.wayfarer.wayfarer_backend.service;
 
-import com.wayfarer.wayfarer_backend.service.hike.GpxService;
+import com.wayfarer.wayfarer_backend.service.hike_service.GpxService;
+import com.wayfarer.wayfarer_backend.service.hike_service.ParsedGpx;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
@@ -38,7 +39,6 @@ class GpxServiceTest {
 
     @BeforeEach
     void setUp() {
-        gpxService = new GpxService();
         ReflectionTestUtils.setField(gpxService, "ignClient", restClient);
     }
 
@@ -87,7 +87,7 @@ class GpxServiceTest {
     @Test
     @DisplayName("Doit calculer les métriques directement quand l'élévation est présente dans le GPX")
     void shouldComputeMetricsWithExistingElevation() {
-        GpxService.ParsedGpx result = gpxService.parse(gpxWithElevation());
+        ParsedGpx result = gpxService.parse(gpxWithElevation());
 
         assertThat(result.distanceMeters()).isGreaterThan(0);
         assertThat(result.elevationGain()).isGreaterThanOrEqualTo(0);
@@ -133,7 +133,7 @@ class GpxServiceTest {
 
         mockIgnCallReturning(ignResponseStream);
 
-        GpxService.ParsedGpx result = gpxService.parse(gpxWithoutElevation());
+        ParsedGpx result = gpxService.parse(gpxWithoutElevation());
 
         assertThat(result.distanceMeters()).isGreaterThan(0);
         assertThat(result.elevationGain()).isGreaterThan(0);
@@ -145,13 +145,16 @@ class GpxServiceTest {
     @Test
     @DisplayName("Doit retourner une élévation à zéro si l'appel IGN échoue")
     void shouldFallbackToZeroElevationWhenIgnCallFails() {
+        //Arrange
         when(restClient.get()).thenReturn(requestHeadersUriSpec);
         when(requestHeadersUriSpec.uri(anyString(), any(Object[].class)))
                 .thenReturn(requestHeadersSpec);
         when(requestHeadersSpec.retrieve()).thenThrow(new RuntimeException("IGN indisponible"));
 
-        GpxService.ParsedGpx result = gpxService.parse(gpxWithoutElevation());
+        //Act
+        ParsedGpx result = gpxService.parse(gpxWithoutElevation());
 
+        //Assert
         assertThat(result.elevationGain()).isZero();
         assertThat(result.elevationLoss()).isZero();
         assertThat(result.distanceMeters()).isGreaterThan(0);

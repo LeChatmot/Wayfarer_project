@@ -1,6 +1,5 @@
 package com.wayfarer.wayfarer_backend.repository;
 
-import aj.org.objectweb.asm.commons.Remapper;
 import com.wayfarer.wayfarer_backend.model.RefreshToken;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.Modifying;
@@ -15,9 +14,9 @@ public interface RefreshTokenRepository extends JpaRepository<RefreshToken, Inte
 
     @Modifying
     @Transactional
-    @Query("DELETE FROM RefreshToken r WHERE r.user.id = :userId")
-    void deleteByUserId(Integer userId);
+    @Query("UPDATE RefreshToken r SET r.revoked = true WHERE r.user.id = :userId AND r.revoked = false")
+    void revokeAllByUserId(Integer userId);
 
-    @Query("SELECT RefreshToken from RefreshToken r WHERE r.user.email = :email")
-    RefreshToken findByUserEmail(String email);
+    @Query("SELECT r FROM RefreshToken r WHERE r.user.email = :email AND r.revoked = false ORDER BY r.expiryDate DESC")
+    Optional<RefreshToken> findTopByUserEmail(String email);
 }

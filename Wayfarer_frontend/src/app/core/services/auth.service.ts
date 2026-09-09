@@ -2,52 +2,74 @@ import { Injectable } from '@angular/core';
 import { HttpClient } from '@angular/common/http';
 import { Observable, tap } from 'rxjs';
 import { environment } from '../../../environments/environment';
-import { AuthResponse, LoginRequest, RegisterRequest, TokenValidationResponse} from '../models/auth.model';
+import { AuthResponse, LoginRequest, RegisterRequest, TokenValidationResponse } from '../models/auth.model';
 import { TokenStorageService } from './token-storage.service';
 
 @Injectable({ providedIn: 'root' })
 export class AuthService {
 
   constructor(
-    private http: HttpClient,
-    private tokenStorage: TokenStorageService
+    private readonly http: HttpClient,
+    private readonly tokenStorage: TokenStorageService
   ) {}
 
-  login(request: LoginRequest): Observable<AuthResponse> {
-    return this.http.post<AuthResponse>(`${environment.apiUrl}/auth/login`, request).pipe(
-      tap(response => this.tokenStorage.saveTokens(response.accessToken, response.refreshToken))
+  login(email: string, password: string): Observable<AuthResponse> {
+    const request: LoginRequest = { email, password };
+    return this.http.post<AuthResponse>(
+      `${environment.apiUrl}/auth/login`,
+      request,
+      { withCredentials: true }
+    ).pipe(
+      tap(response => this.tokenStorage.saveAccessToken(response.accessToken))
     );
   }
 
   register(request: RegisterRequest): Observable<AuthResponse> {
-    return this.http.post<AuthResponse>(`${environment.apiUrl}/auth/register`, request).pipe(
-      tap(response => this.tokenStorage.saveTokens(response.accessToken, response.refreshToken))
+    return this.http.post<AuthResponse>(
+      `${environment.apiUrl}/auth/register`,
+      request,
+      { withCredentials: true }
+    ).pipe(
+      tap(response => this.tokenStorage.saveAccessToken(response.accessToken))
     );
   }
 
   refreshToken(): Observable<AuthResponse> {
-    const refreshToken = this.tokenStorage.getRefreshToken();
-    return this.http.post<AuthResponse>(`${environment.apiUrl}/auth/refresh`, { refreshToken }).pipe(
-      tap(response => this.tokenStorage.saveTokens(response.accessToken, response.refreshToken))
+    return this.http.post<AuthResponse>(
+      `${environment.apiUrl}/auth/refresh`,
+      {},
+      { withCredentials: true }
+    ).pipe(
+      tap(response => this.tokenStorage.saveAccessToken(response.accessToken))
     );
   }
 
   validateToken(): Observable<TokenValidationResponse> {
     const accessToken = this.tokenStorage.getAccessToken();
-    return this.http.post<TokenValidationResponse>(`${environment.apiUrl}/auth/validate`, {
-      headers: { Authorization: `Bearer ${accessToken}` }
-    });
+    return this.http.get<TokenValidationResponse>(
+      `${environment.apiUrl}/auth/validate`,
+      {
+        headers: accessToken ? { Authorization: `Bearer ${accessToken}` } : {},
+        withCredentials: true
+      }
+    );
   }
 
-  logout(): void {
-    const refreshToken = this.tokenStorage.getRefreshToken();
-    if (refreshToken) {
-      this.http.post(`${environment.apiUrl}/auth/logout`, { refreshToken }).subscribe();
-    }
-    this.tokenStorage.clearTokens();
+  logout(): Observable<void> {
+    return this.http.post<void>(
+      `${environment.apiUrl}/auth/logout`,
+      {},
+      { withCredentials: true }
+    ).pipe(
+      tap(() => this.tokenStorage.clearTokens())
+    );
   }
 
   isAuthenticated(): boolean {
-    return this.tokenStorage.hasToken();
+    return this.tokenStorage.hasAccessToken();
+  }
+
+  isAdmin(): Observable<boolean> {
+    return this.http.get<boolean>(`${environment.apiUrl}/auth/isAdmin`)
   }
 }

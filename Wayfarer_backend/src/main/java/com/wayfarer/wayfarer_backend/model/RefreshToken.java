@@ -30,6 +30,6 @@ public class RefreshToken {
     private boolean revoked = false;
 
     public boolean isExpired(){
-        return expiryDate.isAfter(Instant.now());
+        return expiryDate.isBefore(Instant.now());
     }
 }
